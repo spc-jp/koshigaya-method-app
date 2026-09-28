@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>越谷メソッド - KOSHIGAYA BOYS QUIZ</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti for celebrating high score/correct streaks -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+    
+    body {
+      font-family: 'Noto Sans JP', 'M PLUS Rounded 1c', sans-serif;
+      background: radial-gradient(circle at top right, #1e293b, #0f172a 70%);
+      color: #f1f5f9;
+      min-height: 100vh;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.5);
+      border-radius: 9999px;
+    }
+
+    .badge-glow {
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+    }
+    .card-glow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+    .option-btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .option-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+    .option-btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 md:p-6 flex flex-col justify-between">
+
+  <div class="max-w-7xl mx-auto w-full">
+    <!-- Header -->
+    <header class="flex flex-wrap items-center justify-between border-b border-slate-700/80 pb-4 mb-5 gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center shadow-lg font-black text-white text-xl tracking-tighter border border-amber-300/40">
+          KB
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">越谷ボーイズ公式</span>
+            <span class="text-xs text-slate-400">マニュアル完全準拠 β版</span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-black tracking-wide text-white flex items-center gap-2">
+            越谷メソッド <span class="text-xs sm:text-sm font-bold text-amber-400 tracking-widest uppercase">Koshigaya Boys Quiz</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Streaks & Global Controls -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Consecutive days badge -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/90 border border-amber-500/40 rounded-full shadow-inner badge-glow">
+          <i data-lucide="flame" class="w-4 h-4 text-orange-400 fill-orange-500 animate-pulse"></i>
+          <span class="text-xs sm:text-sm font-bold text-amber-300">6日連続 翔</span>
+        </div>
+        
+        <!-- Confidential Mode Indicator -->
+        <button id="auth-lock-btn" onclick="toggleConfidentialAccess()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition border border-slate-600 bg-slate-800 hover:bg-slate-700 text-slate-300">
+          <i id="lock-icon" data-lucide="lock" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span id="lock-label">チーム限定認証</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Overall Progress bar -->
+    <div class="bg-slate-800/80 backdrop-blur rounded-2xl p-4 border border-slate-700/60 mb-5 card-glow">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm mb-2 gap-2">
+        <div class="flex items-center gap-3">
+          <span class="text-slate-400 font-medium">全体の進み具合</span>
+          <span class="text-lg sm:text-xl font-black text-amber-400 font-mono tracking-tight" id="progress-ratio-text">59 / 200 問</span>
+        </div>
+        <div class="flex items-center gap-4 text-xs">
+          <span class="text-emerald-400 flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> 正解: <b id="stat-correct-count" class="text-sm">49</b></span>
+          <span class="text-rose-400 flex items-center gap-1"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i> 復習必要: <b id="stat-wrong-count" class="text-sm">10</b></span>
+          <span class="text-cyan-300 flex items-center gap-1 font-semibold"><i data-lucide="percent" class="w-3.5 h-3.5"></i> 正答率: <b id="stat-accuracy-rate" class="text-sm font-mono">83%</b></span>
+        </div>
+      </div>
+      <div class="w-full bg-slate-900 rounded-full h-3.5 overflow-hidden p-0.5 border border-slate-700">
+        <div id="global-progress-bar" class="bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-400 h-full rounded-full transition-all duration-500" style="width: 29.5%"></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+      <!-- Left Sidebar: Category Filters & Completion -->
+      <aside class="lg:col-span-3 space-y-4">
+        <div class="bg-slate-800/90 rounded-2xl p-4 border border-slate-700/70 card-glow">
+          <div class="flex items-center justify-between mb-3 border-b border-slate-700 pb-2">
+            <h2 class="font-bold text-sm tracking-wide text-slate-200 flex items-center gap-2">
+              <i data-lucide="folder-kanban" class="w-4 h-4 text-amber-400"></i> カテゴリー
+            </h2>
+            <button onclick="filterCategory('all')" class="text-xs text-amber-400 hover:underline font-semibold">すべて</button>
+          </div>
+
+          <div id="category-list" class="space-y-1.5 text-xs sm:text-sm">
+            <!-- Rendered by JavaScript -->
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-700/70 text-[11px] text-amber-300/80 bg-amber-950/20 p-2.5 rounded-lg border border-amber-600/30 flex items-start gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+            <span>バッテリー論・カウント別は<b>チーム内公開のみ</b>。配球情報は対外秘です。</span>
+          </div>
+        </div>
+
+        <!-- Chapter Progress Mini-card -->
+        <div class="bg-slate-800/90 rounded-2xl p-4 border border-slate-700/70 card-glow hidden lg:block">
+          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+            <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-emerald-400"></i> 章ごとの達成度
+          </h3>
+          <div id="chapter-progress-bars" class="space-y-2.5 text-xs">
+            <!-- Dynamic list -->
+          </div>
+        </div>
+      </aside>
+
+      <main class="lg:col-span-6 space-y-4">
+        <div class="bg-slate-800/95 rounded-2xl p-4 sm:p-6 border border-slate-700/80 card-glow relative overflow-hidden">
+          
+          <!-- Top meta bar of Question -->
+          <div class="flex flex-wrap items-center justify-between pb-3 mb-4 border-b border-slate-700/80 gap-2">
+            <div class="flex items-center gap-2">
+              <span id="q-category-tag" class="px-2.5 py-1 rounded-md text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                掟の実践
+              </span>
+              <span id="q-index-tag" class="text-xs font-mono font-bold text-slate-400">
+                問題 59 / 200
+              </span>
+            </div>
+            
+            <!-- Difficulty Stars -->
+            <div class="flex items-center gap-1 text-amber-400" id="q-difficulty">
+              <span class="text-xs font-semibold mr-1 text-slate-400">難易度</span>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+            </div>
+          </div>
+
+          <!-- Question Content -->
+          <div class="mb-6">
+            <h2 id="q-question-text" class="text-base sm:text-lg font-bold text-white leading-relaxed">
+              追い込まれた後、「意識は逆方向、目付けはインコース」とする理由の1つはどれか？
+            </h2>
+            <div id="q-note" class="mt-2 text-xs text-slate-400 italic hidden"></div>
+          </div>
+
+          <!-- Choices A, B, C, D -->
+          <div id="choices-container" class="space-y-3 mb-6">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Feedback & Explanation (Hidden until answered) -->
+          <div id="explanation-box" class="hidden rounded-xl p-4 border transition-all duration-300 mb-5">
+            <div class="flex items-center gap-2 mb-2 font-black text-base" id="feedback-heading">
+              <!-- Result Icon & Title -->
+            </div>
+            <div id="explanation-text" class="text-xs sm:text-sm text-slate-200 leading-relaxed space-y-2">
+              <!-- Explanation details -->
+            </div>
+            <div id="manual-ref" class="mt-3 pt-2 border-t border-slate-700/60 text-[11px] text-amber-300/90 font-mono flex items-center gap-1.5">
+              <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+              <span>参考：マニュアル 第3章 打撃の考え方 (3-3)</span>
+            </div>
+          </div>
+
+          <!-- Bottom Control Bar -->
+          <div class="flex items-center justify-between pt-3 border-t border-slate-700/80 gap-2">
+            <button id="prev-btn" onclick="navQuestion(-1)" class="flex items-center gap-1 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-700 hover:bg-slate-600 text-slate-200 transition">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> 前の問題
+            </button>
+
+            <button onclick="randomQuestion()" class="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-amber-400 hover:bg-slate-700/50 transition">
+              <i data-lucide="shuffle" class="w-3.5 h-3.5"></i> ランダム
+            </button>
+
+            <button id="next-btn" onclick="navQuestion(1)" class="flex items-center gap-1 px-5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md transition">
+              次の問題へ <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <aside class="lg:col-span-3 space-y-4">
+        <!-- Today's Record Card (from design image) -->
+        <div class="bg-slate-800/90 rounded-2xl p-4 border border-slate-700/70 card-glow">
+          <h3 class="font-bold text-sm tracking-wide text-slate-200 mb-3 flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><i data-lucide="calendar-check-2" class="w-4 h-4 text-cyan-400"></i> 今日のせいせき</span>
+            <span class="text-[11px] text-slate-400">今日 19問中 16問正解</span>
+          </h3>
+
+          <div class="bg-slate-900/80 rounded-xl p-3 border border-slate-700 flex items-center justify-around text-center mb-3">
+            <div>
+              <div class="text-[11px] text-slate-400">本日正答率</div>
+              <div class="text-2xl font-black text-amber-400 font-mono" id="today-accuracy">84%</div>
+            </div>
+            <div class="w-[1px] h-8 bg-slate-700"></div>
+            <div>
+              <div class="text-[11px] text-slate-400">解いた問題</div>
+              <div class="text-2xl font-black text-cyan-300 font-mono" id="today-solved-count">19<span class="text-xs font-normal text-slate-400 ml-0.5">問</span></div>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-slate-400 leading-normal">
+            毎日15分でも反復することで、試合中の瞬時の判断（走塁判断や配球読み）が体に染み込みます。
+          </p>
+        </div>
+
+        <!-- Leaderboard (from design image) -->
+        <div class="bg-slate-800/90 rounded-2xl p-4 border border-slate-700/70 card-glow">
+          <div class="flex items-center justify-between mb-3 border-b border-slate-700 pb-2">
+            <h3 class="font-bold text-sm tracking-wide text-slate-200 flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i> チームのランキング
+            </h3>
+            <span class="text-[10px] text-slate-400">クリア数順</span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black flex items-center justify-center text-[10px]">1</span>
+                <span class="font-bold text-slate-200">こばやし 翔</span>
+                <span class="text-[10px] px-1 bg-amber-400/20 text-amber-300 rounded font-semibold">中3</span>
+              </div>
+              <span class="font-mono font-bold text-amber-300">188 問</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-700/40 border border-slate-700">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-slate-400 text-slate-950 font-bold flex items-center justify-center text-[10px]">2</span>
+                <span class="font-semibold text-slate-200">たなか 悠</span>
+                <span class="text-[10px] px-1 bg-slate-600 text-slate-300 rounded">中2</span>
+              </div>
+              <span class="font-mono font-bold text-slate-300">171 問</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-700/40 border border-slate-700">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-amber-800 text-amber-100 font-bold flex items-center justify-center text-[10px]">3</span>
+                <span class="font-semibold text-slate-200">さとう 蓮</span>
+                <span class="text-[10px] px-1 bg-slate-600 text-slate-300 rounded">中3</span>
+              </div>
+              <span class="font-mono font-bold text-slate-300">165 問</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-950/20 border border-emerald-500/40">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-[10px]">5</span>
+                <span class="font-bold text-emerald-300">あなた（自分）</span>
+              </div>
+              <span class="font-mono font-bold text-emerald-400" id="user-rank-score">59 問</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manual Quick Reference Modal Trigger -->
+        <div class="p-3 bg-gradient-to-r from-slate-800 to-indigo-950/40 border border-indigo-500/30 rounded-2xl flex items-center justify-between">
+          <div>
+            <div class="text-xs font-bold text-indigo-300">マニュアル要点集</div>
+            <div class="text-[10px] text-slate-400">監督赤入れ内容の辞書検索</div>
+          </div>
+          <button onclick="openManualModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition shadow">
+            開く
+          </button>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- Confidential Auth Modal -->
+  <div id="auth-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-slate-900 border border-amber-500/50 rounded-2xl max-w-sm w-full p-5 shadow-2xl">
+      <div class="flex items-center gap-2 mb-3 text-amber-400">
+        <i data-lucide="shield-alert" class="w-6 h-6"></i>
+        <h3 class="font-bold text-base text-white">チーム関係者 認証</h3>
+      </div>
+      <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+        第2章「バッテリー論」および第7章「カウント別配球・打撃」は他校への戦術流出を防ぐため対外非公開です。チームパスコードを入力してください。
+      </p>
+      <div class="mb-4">
+        <input type="password" id="passcode-input" placeholder="パスコード (デモ用: 1234)" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-amber-400">
+        <p id="passcode-error" class="text-xs text-rose-400 mt-1 hidden">パスコードが違います。指導者に確認してください。</p>
+      </div>
+      <div class="flex items-center justify-end gap-2">
+        <button onclick="closeAuthModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:bg-slate-800">キャンセル</button>
+        <button onclick="submitPasscode()" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400">解除する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Reference Modal -->
+  <div id="manual-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="book" class="w-5 h-5 text-amber-400"></i>
+          <h3 class="font-bold text-sm sm:text-base text-white">越谷メソッド マニュアル β版（要点辞書）</h3>
+        </div>
+        <button onclick="closeManualModal()" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-4 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed">
+        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-amber-300 mb-1">【掟1-1】1塁走者のリード幅 ★★★</h4>
+          <p>右投手なら身長+1歩、左投手なら身長+1.5歩。左投手の方が素早い牽制ができないため大きく取れる。相手捕手・投手にプレッシャーを与え、外の真っ直ぐを狙いやすくする。</p>
+        </div>
+        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-amber-300 mb-1">【掟1-3】2死2ストライクの走塁 ★★★</h4>
+          <p>打者は「スイングGO」、2塁走者は「ストライクGO」。三振でチェンジになる場面では0.1秒でも速くホームへ向かうため例外なく徹底。</p>
+        </div>
+        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-amber-300 mb-1">【打撃3-3】追い込まれた後の意識 ★★★</h4>
+          <p>「意識は逆方向、目付けはインコース」。引っ張り意識のままだと低めの変化球に空振りするため逆方向へ。目付けをインコースにしておかないと内角速球に反応できない。</p>
+        </div>
+        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-amber-300 mb-1">【守備5-3】中継プレー（カットマンとトレーラー） ★★★</h4>
+          <p>カットマンは外野からの返球を直接中継。トレーラーはその頭上を越えた送球やショートバウンドをバックアップ。走者がぐるぐる回るのを防ぐ。</p>
+        </div>
+        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-amber-300 mb-1">【走塁4-2】ニュートラルの動き ★★★</h4>
+          <p>1塁走者がレフト前ヒット等で1・2塁間の2/3で一度緩め、ベース付近で再加速。外野手の捕球を確認して進塁かストップかを判断する原則。</p>
+        </div>
+      </div>
+      <div class="p-3 bg-slate-950 border-t border-slate-800 text-right">
+        <button onclick="closeManualModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Detailed questions extracted directly from the Koshigaya Method Manual & CSV requirements
+    const quizDatabase = [
+      {
+        id: 59,
+        category: "打撃",
+        chapter: "3 打撃の考え方",
+        difficulty: 3,
+        question: "追い込まれた後、「意識は逆方向、目付けはインコース」とする理由の1つはどれか？",
+        note: "※マニュアル 3-3 より出題",
+        choices: [
+          { key: "A", text: "打った瞬間の反応を速くするため" },
+          { key: "B", text: "引っ張り意識のままだと低めの変化球を差し込まれて三振しやすいため" },
+          { key: "C", text: "審判の判定がインコースに厳しくなるため" },
+          { key: "D", text: "バットを短く持つ選手向けの調整のため" }
+        ],
+        answer: "B",
+        explanation: "引っ張り意識のままだと、低めの変化球を簡単に空振りして三振してしまうため、意識を逆方向に置きます。目付けをインコースにしておかないと、実際にインコースへ投げられたときに反応できません。",
+        ref: "第3章 打撃の考え方 (3-3 追い込まれた後の意識)"
+      },
+      {
+        id: 1,
+        category: "掟の確認",
+        chapter: "1 掟の実践",
+        difficulty: 3,
+        question: "1塁走者のリード幅について、越谷ボーイズの基本的な「掟」はどれか？",
+        note: "※マニュアル 1-1 より出題",
+        choices: [
+          { key: "A", text: "右投手・左投手問わず、一律で身長の2倍" },
+          { key: "B", text: "右投手なら身長+1歩、左投手なら身長+1.5歩" },
+          { key: "C", text: "右投手なら身長+1.5歩、左投手なら身長+1歩" },
+          { key: "D", text: "投手の牽制球が来るまで歩数制限なしで広げる" }
+        ],
+        answer: "B",
+        explanation: "右投手なら身長+1歩、左投手なら身長+1.5歩が基本です。左投手のほうが素早い牽制ができないため、より大きくリードを取ってプレッシャーをかけます。",
+        ref: "第1章 掟の実践 (1-1 1塁走者のリード幅)"
+      },
+      {
+        id: 2,
+        category: "掟の確認",
+        chapter: "1 掟の実践",
+        difficulty: 2,
+        question: "2アウト走者2塁の内野ゴロ処理で、内野手が取るべき送球判断はどれか？",
+        note: "※マニュアル 1-2 より出題",
+        choices: [
+          { key: "A", text: "1塁へ投げた後、すぐに本塁(ホーム)へ転送する" },
+          { key: "B", text: "絶対にホームへは投げず、確実に1塁アウトでチェンジを待つ" },
+          { key: "C", text: "最初から1塁には投げず直接サードへ投げて走者を挟む" },
+          { key: "D", text: "外野手にボールをトスしてバックアップさせる" }
+        ],
+        answer: "A",
+        explanation: "バッターランナーが1塁で間一髪セーフになった場合、2塁走者もホームへ突入している可能性が高いため、本塁へ転送します（4アウト目の発想）。",
+        ref: "第1章 掟の実践 (1-2 2アウト・走者2塁の内野ゴロ処理)"
+      },
+      {
+        id: 3,
+        category: "掟の確認",
+        chapter: "1 掟の実践",
+        difficulty: 3,
+        question: "「2アウト2ストライク」での走者と打者の動きとして正しい組み合わせはどれか？",
+        note: "※マニュアル 1-3 より出題",
+        choices: [
+          { key: "A", text: "打者は見逃しGO、走者は投球モーションGO" },
+          { key: "B", text: "打者はスイングGO、2塁走者はストライクGO" },
+          { key: "C", text: "打者も走者も捕手が捕球した瞬間にスタート" },
+          { key: "D", text: "ボールカウントが3-2になるまで走者は完全にストップ" }
+        ],
+        answer: "B",
+        explanation: "打者はスイングGO、2塁走者はストライクGOで動きます。ストライクなら三振で3アウトになる可能性があるため、0.1秒でも速くホームへ向かうためです。例外なく徹底します。",
+        ref: "第1章 掟の実践 (1-3 2アウト2ストライクの走塁)"
+      },
+      {
+        id: 4,
+        category: "走塁",
+        chapter: "4 走塁の考え方",
+        difficulty: 3,
+        question: "1塁走者にとって、ライナーが飛んだときに「ライナーバックせずGO（戻らない）」と判断する打球方向はどこか？",
+        note: "※マニュアル 1-4 & 4-11 より出題",
+        choices: [
+          { key: "A", text: "自分より右側（1塁線方向）のライナー" },
+          { key: "B", text: "自分より左側（二遊間方向）のライナー" },
+          { key: "C", text: "ピッチャーの正面への強いライナー" },
+          { key: "D", text: "ライトフェンス直撃のライナー" }
+        ],
+        answer: "B",
+        explanation: "自分より左側（二遊間方向）のライナーは、すでに第2リードを取っている位置関係上、慌てて戻ってもダブルプレーになりやすいため、進塁を狙う方が得だという判断でGOとします（満塁・1,3塁の例外を除く）。",
+        ref: "第1章 掟の実践 (1-4 ライナーバックの使い分け)"
+      },
+      {
+        id: 5,
+        category: "守備",
+        chapter: "5 守備の考え方",
+        difficulty: 3,
+        question: "中継プレーにおける「トレーラー」の最も重要な役割はどれか？",
+        note: "※マニュアル 5-3 より出題",
+        choices: [
+          { key: "A", text: "外野手に大きな声で返球先を叫ぶこと" },
+          { key: "B", text: "カットマンの頭を越えた球やショートバウンドでスルーした球を中継・カバーすること" },
+          { key: "C", text: "ボールを持ったまま打者走者を追いかけること" },
+          { key: "D", text: "ピッチャーマウンドをカバーすること" }
+        ],
+        answer: "B",
+        explanation: "トレーラーは、カットマンの頭を越えた高い球や、ショートバウンドをスルーした球を中継します。トレーラーがいなければ走者がぐるぐる回ってしまうため必須の連携です。",
+        ref: "第5章 守備の考え方 (5-3 中継プレー)"
+      },
+      {
+        id: 6,
+        category: "打撃",
+        chapter: "3 打撃の考え方",
+        difficulty: 2,
+        question: "打撃で「ストライクゾーンを腿（もも）より上に設定する」主な狙いはどれか？",
+        note: "※マニュアル 3-7 より出題",
+        choices: [
+          { key: "A", text: "高めのボール球をあえて振ってファウルにするため" },
+          { key: "B", text: "低めの球を打って内野ゴロゲッツーや浅い外野フライになるのを防ぎ、見極めるため" },
+          { key: "C", text: "球審にアピールして低めをボールと判定させるため" },
+          { key: "D", text: "バントの構えを相手に見せつけるため" }
+        ],
+        answer: "B",
+        explanation: "腿より下、特に膝より下は捨て、そこでの見逃し三振はOKとされています。低めの球を無理に打ってゲッツーになるのを防ぐためです。",
+        ref: "第3章 打撃の考え方 (3-7 ゾーンを腿より上に設定する理由)"
+      },
+      {
+        id: 7,
+        category: "守備",
+        chapter: "5 守備の考え方",
+        difficulty: 2,
+        question: "ランダウンプレー（挟殺プレー）で走者をアウトにする鉄則はどれか？",
+        note: "※マニュアル 5-6 より出題",
+        choices: [
+          { key: "A", text: "常に次の塁（進塁先）側でアウトにする" },
+          { key: "B", text: "「若い塁」（手前側の塁）側でアウトにする" },
+          { key: "C", text: "最低5回以上ボールを往復させてからタッチする" },
+          { key: "D", text: "走者が立ち止まるまでボールを投げない" }
+        ],
+        answer: "B",
+        explanation: "手前側の「若い塁」でアウトにするのが原則です。3本間なら3塁側でアウトにし、次の塁（本塁）へ進めさせないようにします。",
+        ref: "第5章 守備の考え方 (5-6 ランダウンプレーの原則)"
+      },
+      {
+        id: 8,
+        category: "走塁",
+        chapter: "4 走塁の考え方",
+        difficulty: 3,
+        question: "走塁における「ニュートラルの動き」とはどのような動きか？",
+        note: "※マニュアル 4-2 より出題",
+        choices: [
+          { key: "A", text: "打球に関わらず全力で次の塁に頭から滑り込む動き" },
+          { key: "B", text: "1・2塁間の2/3で緩め、ベース付近で加速し、外野手の捕球を確認して止まるか進むか判断する動き" },
+          { key: "C", text: "ベース上で静止し、ベンチからのサインが出るまで動かないこと" },
+          { key: "D", text: "牽制球を誘うためにわざとベースから離れて立ち尽くすこと" }
+        ],
+        answer: "B",
+        explanation: "1塁走者がレフト前などの打球時、1・2塁間の2/3で一度緩めてベース付近で加速、外野手の捕球結果（補殺かエラーか）を見て判断する実戦的な走塁です。",
+        ref: "第4章 走塁の考え方 (4-2 ニュートラルの動き)"
+      },
+      {
+        id: 9,
+        category: "投手・捕手",
+        chapter: "6 投手・捕手の考え方",
+        difficulty: 2,
+        question: "捕手のブロッキング（ワンバウンドストップ）において、最も重要と指導されるポイントはどれか？",
+        note: "※マニュアル 6-5 より出題",
+        choices: [
+          { key: "A", text: "体に力を目一杯入れ、ボールを前に大きく跳ね返す" },
+          { key: "B", text: "息を吐いて脱力すること" },
+          { key: "C", text: "ミットだけでキャッチしにいくこと" },
+          { key: "D", text: "後ろに逸らしてもすぐに拾えるよう目をつぶる" }
+        ],
+        answer: "B",
+        explanation: "息を吐いて脱力することが最も大切です。体に余計な力が入って硬くなっているとボールを前に弾きすぎてしまいます。",
+        ref: "第6章 投手・捕手の考え方 (6-5 ブロッキングの最重要ポイント)"
+      },
+      {
+        id: 10,
+        category: "バッテリー論",
+        chapter: "2 バッテリー論 (非公開)",
+        confidential: true,
+        difficulty: 3,
+        question: "【チーム内限定】追い込んでからの「ボール2個外す」配球において、満塁の2ストライク3ボール(フルカウント)での注意点は？",
+        note: "※マニュアル 2-10 より出題",
+        choices: [
+          { key: "A", text: "さらに大きく外して打者の空振りを誘う" },
+          { key: "B", text: "押し出し四球で失点するリスクがあるため、機械的に外さず慎重な判断を行う" },
+          { key: "C", text: "必ず敬遠気味に立って捕球する" },
+          { key: "D", text: "投手に任せて捕手はサインを出さない" }
+        ],
+        answer: "B",
+        explanation: "満塁で2-3からさらに2つ外すと押し出し四球で即失点につながるため、この場面では状況に応じた極めて慎重な判断が必要です。",
+        ref: "第2章 バッテリー論 (2-10 「ボール2個外す」配球)"
+      },
+      {
+        id: 11,
+        category: "用語集",
+        chapter: "8 用語集",
+        difficulty: 1,
+        question: "打者タイプ「フル・マルチ・つなぎ」における「つなぎ」の役割として正しいものはどれか？",
+        note: "※マニュアル 3-1 & 8章 より出題",
+        choices: [
+          { key: "A", text: "ホームランを狙って常にフルスイングする打者" },
+          { key: "B", text: "1試合2安打をコンスタントに放つ中距離打者" },
+          { key: "C", text: "小技や四球を選んで後ろの打者にチャンスをつなぐ打者" },
+          { key: "D", text: "守備専門で打席では必ず見逃し三振をする選手" }
+        ],
+        answer: "C",
+        explanation: "フル＝長打・本塁打、マルチ＝2安打打者、つなぎ＝小技や粘りで後ろにつなぐ打者です。全員が同じタイプでは打線にならないため適材適所で役割を果たします。",
+        ref: "第8章 用語集 / 第3章 (3-1 打者タイプ)"
+      }
+    ];
+
+    let currentIndex = 0;
+    let currentFilter = 'all';
+    let userStats = {
+      solvedToday: 19,
+      correctToday: 16,
+      totalSolved: 59,
+      categoryProgress: {
+        "打撃": { solved: 14, total: 26 },
+        "掟の確認": { solved: 15, total: 15 },
+        "走塁": { solved: 9, total: 24 },
+        "守備": { solved: 3, total: 25 },
+        "投手・捕手": { solved: 0, total: 14 },
+        "バッテリー論": { solved: 0, total: 12 },
+        "用語集": { solved: 0, total: 19 }
+      }
+    };
+    let isUnlocked = false; // Confidential access lock
+    let selectedOption = null;
+    let isAnswered = false;
+
+    // Filter questions based on access
+    function getFilteredQuestions() {
+      return quizDatabase.filter(q => {
+        if (q.confidential && !isUnlocked) return false;
+        if (currentFilter === 'all') return true;
+        return q.category === currentFilter;
+      });
+    }
+
+    function renderCategories() {
+      const catListEl = document.getElementById('category-list');
+      catListEl.innerHTML = '';
+
+      const categories = [
+        { name: "打撃", label: "打撃" },
+        { name: "掟の確認", label: "掟の確認" },
+        { name: "走塁", label: "走塁" },
+        { name: "守備", label: "守備" },
+        { name: "投手・捕手", label: "投手・捕手" },
+        { name: "バッテリー論", label: "バッテリー論 (限定)", lock: !isUnlocked },
+        { name: "用語集", label: "用語集" },
+      ];
+
+      categories.forEach(cat => {
+        const prog = userStats.categoryProgress[cat.name] || { solved: 0, total: 20 };
+        const isActive = currentFilter === cat.name;
+        
+        const btn = document.createElement('button');
+        btn.onclick = () => filterCategory(cat.name);
+        btn.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl transition ${
+          isActive 
+            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold' 
+            : 'bg-slate-900/60 hover:bg-slate-700/60 text-slate-300 border border-slate-700/50'
+        }`;
+
+        btn.innerHTML = `
+          <div class="flex items-center gap-2">
+            ${cat.lock ? '<i data-lucide="lock" class="w-3.5 h-3.5 text-amber-400"></i>' : '<i data-lucide="tag" class="w-3.5 h-3.5 text-slate-400"></i>'}
+            <span>${cat.label}</span>
+          </div>
+          <span class="font-mono font-semibold ${prog.solved === prog.total ? 'text-emerald-400' : 'text-slate-400'}">
+            ${prog.solved}/${prog.total}
+          </span>
+        `;
+        catListEl.appendChild(btn);
+      });
+
+      // Chapter progress mini bars
+      const chapEl = document.getElementById('chapter-progress-bars');
+      if (chapEl) {
+        chapEl.innerHTML = `
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1"><span>掟の実践</span><span class="font-mono font-bold text-emerald-400">100%</span></div>
+            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full w-[100%]"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1"><span>打撃</span><span class="font-mono font-bold text-amber-400">54%</span></div>
+            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden"><div class="bg-amber-500 h-full w-[54%]"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1"><span>走塁</span><span class="font-mono font-bold text-cyan-400">38%</span></div>
+            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden"><div class="bg-cyan-500 h-full w-[38%]"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-slate-400 mb-1"><span>守備</span><span class="font-mono font-bold text-rose-400">12%</span></div>
+            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden"><div class="bg-rose-500 h-full w-[12%]"></div></div>
+          </div>
+        `;
+      }
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function filterCategory(catName) {
+      if (catName === 'バッテリー論' && !isUnlocked) {
+        openAuthModal();
+        return;
+      }
+      currentFilter = catName;
+      currentIndex = 0;
+      renderCategories();
+      renderCurrentQuestion();
+    }
+
+    function navQuestion(offset) {
+      const questions = getFilteredQuestions();
+      if (!questions.length) return;
+      currentIndex = (currentIndex + offset + questions.length) % questions.length;
+      renderCurrentQuestion();
+    }
+
+    function randomQuestion() {
+      const questions = getFilteredQuestions();
+      if (questions.length <= 1) return;
+      let newIdx;
+      do {
+        newIdx = Math.floor(Math.random() * questions.length);
+      } while (newIdx === currentIndex);
+      currentIndex = newIdx;
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      const questions = getFilteredQuestions();
+      isAnswered = false;
+      selectedOption = null;
+
+      if (!questions.length) {
+        document.getElementById('q-question-text').textContent = "このカテゴリーに問題はありません。";
+        document.getElementById('choices-container').innerHTML = '';
+        return;
+      }
+
+      const q = questions[currentIndex];
+
+      // Tags & Header
+      document.getElementById('q-category-tag').textContent = q.category;
+      document.getElementById('q-index-tag').textContent = `問題 ${q.id} / 200`;
+      
+      // Star difficulty
+      const diffEl = document.getElementById('q-difficulty');
+      let starsHtml = `<span class="text-xs font-semibold mr-1 text-slate-400">難易度</span>`;
+      for (let i = 0; i < 3; i++) {
+        const fill = i < q.difficulty ? 'fill-amber-400' : 'text-slate-600';
+        starsHtml += `<i data-lucide="star" class="w-3.5 h-3.5 ${fill}"></i>`;
+      }
+      diffEl.innerHTML = starsHtml;
+
+      // Question body
+      document.getElementById('q-question-text').textContent = q.question;
+      const noteEl = document.getElementById('q-note');
+      if (q.note) {
+        noteEl.textContent = q.note;
+        noteEl.classList.remove('hidden');
+      } else {
+        noteEl.classList.add('hidden');
+      }
+
+      // Options
+      const choicesEl = document.getElementById('choices-container');
+      choicesEl.innerHTML = '';
+
+      q.choices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.id = `choice-${c.key}`;
+        btn.onclick = () => selectChoice(c.key);
+        btn.className = `option-btn w-full text-left p-3.5 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-700/60 transition flex items-start gap-3 text-xs sm:text-sm text-slate-200`;
+        btn.innerHTML = `
+          <span class="w-6 h-6 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-bold text-amber-400 shrink-0 mt-0.5 text-xs">
+            ${c.key}
+          </span>
+          <span class="leading-relaxed flex-1">${c.text}</span>
+        `;
+        choicesEl.appendChild(btn);
+      });
+
+      // Hide explanation
+      const expBox = document.getElementById('explanation-box');
+      expBox.classList.add('hidden');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function selectChoice(key) {
+      if (isAnswered) return;
+      isAnswered = true;
+      selectedOption = key;
+
+      const questions = getFilteredQuestions();
+      const q = questions[currentIndex];
+      const isCorrect = key === q.answer;
+
+      // Update counters
+      userStats.solvedToday++;
+      if (isCorrect) {
+        userStats.correctToday++;
+        triggerConfetti();
+      }
+
+      // Update UI stats
+      const rate = Math.round((userStats.correctToday / userStats.solvedToday) * 100);
+      document.getElementById('today-accuracy').textContent = `${rate}%`;
+      document.getElementById('today-solved-count').innerHTML = `${userStats.solvedToday}<span class="text-xs font-normal text-slate-400 ml-0.5">問</span>`;
+      document.getElementById('stat-accuracy-rate').textContent = `${rate}%`;
+
+      // Highlight options
+      q.choices.forEach(c => {
+        const btn = document.getElementById(`choice-${c.key}`);
+        btn.disabled = true;
+
+        if (c.key === q.answer) {
+          btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-950/40 text-emerald-200 flex items-start gap-3 text-xs sm:text-sm shadow-md";
+          const badge = btn.querySelector('span');
+          badge.className = "w-6 h-6 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center shrink-0 mt-0.5 text-xs";
+        } else if (c.key === key && !isCorrect) {
+          btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-rose-500 bg-rose-950/40 text-rose-200 flex items-start gap-3 text-xs sm:text-sm";
+          const badge = btn.querySelector('span');
+          badge.className = "w-6 h-6 rounded-lg bg-rose-500 text-slate-950 font-black flex items-center justify-center shrink-0 mt-0.5 text-xs";
+        } else {
+          btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-500 opacity-60 flex items-start gap-3 text-xs sm:text-sm";
+        }
+      });
+
+      // Show Feedback Box (matching the original PDF design)
+      const expBox = document.getElementById('explanation-box');
+      const headingEl = document.getElementById('feedback-heading');
+      const textEl = document.getElementById('explanation-text');
+      const refEl = document.getElementById('manual-ref');
+
+      expBox.classList.remove('hidden');
+      if (isCorrect) {
+        expBox.className = "rounded-xl p-4 border border-emerald-500/50 bg-emerald-950/30 text-emerald-300 transition-all duration-300 mb-5";
+        headingEl.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i> <span class="text-emerald-300">○ せいかい！</span>`;
+      } else {
+        expBox.className = "rounded-xl p-4 border border-rose-500/50 bg-rose-950/30 text-rose-300 transition-all duration-300 mb-5";
+        headingEl.innerHTML = `<i data-lucide="alert-circle" class="w-5 h-5 text-rose-400"></i> <span class="text-rose-300">× おしい！ 正解は【${q.answer}】</span>`;
+      }
+
+      textEl.textContent = q.explanation;
+      refEl.innerHTML = `<i data-lucide="book-open" class="w-3.5 h-3.5"></i> <span>出典・根拠：${q.ref}</span>`;
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function triggerConfetti() {
+      if (window.confetti) {
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.75 },
+          colors: ['#f59e0b', '#10b981', '#06b6d4']
+        });
+      }
+    }
+
+    function toggleConfidentialAccess() {
+      if (isUnlocked) {
+        isUnlocked = false;
+        document.getElementById('lock-icon').setAttribute('data-lucide', 'lock');
+        document.getElementById('lock-label').textContent = 'チーム限定認証';
+        document.getElementById('auth-lock-btn').className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition border border-slate-600 bg-slate-800 hover:bg-slate-700 text-slate-300";
+        if (currentFilter === 'バッテリー論') currentFilter = 'all';
+        renderCategories();
+        renderCurrentQuestion();
+      } else {
+        openAuthModal();
+      }
+    }
+
+    function openAuthModal() {
+      document.getElementById('auth-modal').classList.remove('hidden');
+      document.getElementById('passcode-input').value = '';
+      document.getElementById('passcode-error').classList.add('hidden');
+      document.getElementById('passcode-input').focus();
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+    }
+
+    function submitPasscode() {
+      const code = document.getElementById('passcode-input').value;
+      if (code === '1234' || code.toLowerCase() === 'boys' || code === 'koshigaya') {
+        isUnlocked = true;
+        closeAuthModal();
+        document.getElementById('lock-icon').setAttribute('data-lucide', 'unlock');
+        document.getElementById('lock-label').textContent = 'チーム認証済み';
+        document.getElementById('auth-lock-btn').className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition border border-amber-500/60 bg-amber-500/20 text-amber-300";
+        renderCategories();
+        renderCurrentQuestion();
+      } else {
+        document.getElementById('passcode-error').classList.remove('hidden');
+      }
+    }
+
+    // Manual Modal controls
+    function openManualModal() {
+      document.getElementById('manual-modal').classList.remove('hidden');
+    }
+    function closeManualModal() {
+      document.getElementById('manual-modal').classList.add('hidden');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCategories();
+      renderCurrentQuestion();
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
