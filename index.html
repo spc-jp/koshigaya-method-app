@@ -68,12 +68,13 @@
   <div class="max-w-7xl mx-auto w-full">
     <!-- Slimmed & Responsive Header -->
     <header class="flex items-center justify-between border-b border-slate-700/80 pb-3 mb-3 sm:mb-4 gap-2">
-      <div class="flex items-center space-x-2.5 sm:space-x-3.5 min-w-0">
-        <div class="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-slate-900 border border-amber-400/40 p-0.5 sm:p-1 flex items-center justify-center shadow-lg shadow-amber-500/10 overflow-hidden relative group shrink-0">
+      <!-- Clickable Logo & Brand Group (先頭へ戻る) -->
+      <a href="#" onclick="returnToTop(event)" class="flex items-center space-x-2.5 sm:space-x-3.5 min-w-0 group cursor-pointer select-none" title="トップへ戻る">
+        <div class="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-slate-900 border border-amber-400/40 p-0.5 sm:p-1 flex items-center justify-center shadow-lg shadow-amber-500/10 overflow-hidden relative shrink-0 transition-transform duration-200 group-hover:scale-105 group-active:scale-95">
           <img 
             src="https://spc-jp.github.io/koshigaya-method-app/favicon.png" 
             alt="越谷ボーイズ ロゴ" 
-            class="w-full h-full object-contain rounded-lg sm:rounded-xl transition-transform duration-300 group-hover:scale-105"
+            class="w-full h-full object-contain rounded-lg sm:rounded-xl"
             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
           >
           <!-- Fallback text badge if image fails to load -->
@@ -86,11 +87,11 @@
             <span class="text-[10px] sm:text-xs font-semibold px-1.5 py-0.2 sm:px-2 sm:py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 whitespace-nowrap">公式</span>
             <span class="text-[10px] sm:text-xs text-slate-400 truncate hidden xs:inline">マニュアル準拠 β版</span>
           </div>
-          <h1 class="text-base sm:text-xl md:text-2xl font-black tracking-wide text-white flex items-center gap-1.5 truncate">
+          <h1 class="text-base sm:text-xl md:text-2xl font-black tracking-wide text-white flex items-center gap-1.5 truncate group-hover:text-amber-300 transition-colors">
             越谷メソッド <span class="text-[10px] sm:text-xs font-bold text-amber-400 tracking-widest uppercase hidden sm:inline">Koshigaya Boys Quiz</span>
           </h1>
         </div>
-      </div>
+      </a>
 
       <!-- Streaks & Global Controls (Compact & Single-row on mobile) -->
       <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
@@ -117,7 +118,7 @@
     </header>
 
     <!-- Overall Progress bar (Slimmed for Mobile) -->
-    <div class="bg-slate-800/80 backdrop-blur rounded-xl sm:rounded-2xl p-2.5 sm:p-4 border border-slate-700/60 mb-3 sm:mb-5 card-glow">
+    <div class="bg-slate-800/80 backdrop-blur rounded-xl sm:rounded-2xl p-2.5 sm:p-4 border border-slate-700/60 mb-3 sm:mb-4 card-glow">
       <div class="flex items-center justify-between text-xs sm:text-sm mb-1.5 gap-2">
         <div class="flex items-center gap-2">
           <span class="text-slate-400 font-medium text-[11px] sm:text-xs">進み具合</span>
@@ -129,12 +130,12 @@
           <span class="text-cyan-300 flex items-center gap-0.5 font-semibold font-mono"><i data-lucide="percent" class="w-3 h-3"></i> <b id="stat-accuracy-rate">83%</b></span>
         </div>
       </div>
-      <div class="w-full bg-slate-900 rounded-full h-2.5 sm:h-3.5 overflow-hidden p-0.5 border border-slate-700">
+      <div class="w-full bg-slate-900 rounded-full h-2.5 sm:h-3 overflow-hidden p-0.5 border border-slate-700">
         <div id="global-progress-bar" class="bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-400 h-full rounded-full transition-all duration-500" style="width: 29.5%"></div>
       </div>
     </div>
 
-    <!-- NEW: 🔰新入団希望者向け 体験7問スタートバナー -->
+    <!-- 🔰新入団希望者向け 体験7問スタートバナー -->
     <div id="trial-banner" class="mb-3.5 p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-emerald-500/20 border border-amber-500/40 shadow-lg relative overflow-hidden transition-all duration-300 hover:border-amber-400">
       <div class="flex items-center justify-between gap-3 relative z-10">
         <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -162,7 +163,6 @@
           </button>
         </div>
       </div>
-      <!-- Background subtle baseball glow pattern -->
       <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
     </div>
 
@@ -179,7 +179,15 @@
     </div>
 
     <!-- Mobile Horizontal Category Chips (スマホ専用: カテゴリ切替 → クイズの自然な導線) -->
-    <div id="category-chips-wrapper" class="lg:hidden mb-2.5">
+    <div id="category-chips-wrapper" class="lg:hidden mb-2.5 overflow-x-auto no-scrollbar flex items-center gap-1.5 pb-1">
+      <div id="mobile-category-chips" class="flex items-center gap-1.5 shrink-0">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Main Grid Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-5">
+
       <!-- Center (Quiz Main Container) -> Placed FIRST on Mobile (order-1), CENTER on PC (lg:order-2) -->
       <main class="order-1 lg:order-2 lg:col-span-6 space-y-3 sm:space-y-4">
         <div class="bg-slate-800/95 rounded-2xl p-3.5 sm:p-6 border border-slate-700/80 card-glow relative overflow-hidden">
@@ -429,7 +437,7 @@
     </div>
   </div>
 
-  <!-- NEW: How to Use & Purpose Guide Modal -->
+  <!-- How to Use & Purpose Guide Modal -->
   <div id="guide-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6">
     <div class="bg-slate-900 border border-cyan-500/40 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
       <!-- Modal Header -->
@@ -478,7 +486,39 @@
           <div class="space-y-2">
             <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 flex items-start gap-2.5">
               <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-black flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
-  <!-- NEW: Trial Completion Modal (体験7問クリア時の修了画面) -->
+              <div>
+                <b class="text-white text-xs block mb-0.5">毎日10分、移動中や寝る前に反復（座学は外で終わらせる）</b>
+                <p class="text-slate-400 text-xs">グラウンドで長い座学をしなくて済むよう、家や電車でスマホで解いて頭に入れておきます。</p>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-black flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
+              <div>
+                <b class="text-white text-xs block mb-0.5">練習前に「今日のテーマ」をピンポイント復習</b>
+                <p class="text-slate-400 text-xs">「今日は走塁練習の日」なら、グラウンドに入る前に上のチップから【走塁】を選んで頭を活性化させます。</p>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-black flex items-center justify-center text-[10px] shrink-0 mt-0.5">3</span>
+              <div>
+                <b class="text-white text-xs block mb-0.5">間違えたら「解説」と「マニュアル要点集」を必ず読む</b>
+                <p class="text-slate-400 text-xs">ただ正解を覚えるのではなく、「なぜそれが正しいのか」の理由を理解することが本番での応用力になります。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="p-3 bg-slate-950 border-t border-slate-800 text-right">
+        <button onclick="closeGuideModal()" class="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold transition shadow">理解した！</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trial Completion Modal (体験7問クリア時の修了画面) -->
   <div id="trial-complete-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center hidden p-3 sm:p-5">
     <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-amber-400/50 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative overflow-hidden text-center">
       
@@ -587,7 +627,7 @@
       {
         id: 3,
         category: "掟の確認",
-        chapter: "1 掟の実践",
+        chapter: "1 掟の実実践",
         difficulty: 3,
         question: "「2アウト2ストライク」での走者と打者の動きとして正しい組み合わせはどれか？",
         note: "※マニュアル 1-3 より出題",
@@ -756,9 +796,31 @@
         "用語集": { solved: 0, total: 19 }
       }
     };
-    let isUnlocked = false; // Confidential access lock
+    let isUnlocked = false;
     let selectedOption = null;
     let isAnswered = false;
+
+    // ヘッダーロゴクリック時の「先頭・初期状態へ戻る」処理
+    function returnToTop(e) {
+      if (e) e.preventDefault();
+
+      // 体験モード中なら解除して通常表示へ
+      if (isTrialMode) {
+        exitTrialMode();
+      }
+
+      // カテゴリを「すべて」、インデックスを最初（0）にリセット
+      currentFilter = 'all';
+      currentIndex = 0;
+      renderCategories();
+      renderCurrentQuestion();
+
+      // 最上部へスムーズスクロール
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
 
     // Filter questions based on access and trial mode
     function getFilteredQuestions() {
@@ -937,10 +999,8 @@
       if (!questions.length) return;
 
       if (isTrialMode) {
-        // 体験モード時の進捗遷移
         const nextIdx = currentIndex + offset;
         if (nextIdx >= questions.length) {
-          // 7問クリア！修了モーダル表示
           showTrialCompleteModal();
           return;
         }
@@ -983,7 +1043,6 @@
 
       const q = questions[currentIndex];
 
-      // 体験モード時のインジケーター更新
       if (isTrialMode) {
         document.getElementById('trial-step-badge').textContent = `${currentIndex + 1} / ${questions.length} 問`;
         document.getElementById('q-category-tag').className = "px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-black bg-amber-400 text-slate-950 shadow-sm";
@@ -1048,7 +1107,6 @@
       isAnswered = true;
       selectedOption = key;
 
-      // Haptic vibration feedback for mobile devices (if supported)
       if (typeof navigator !== 'undefined' && navigator.vibrate) {
         navigator.vibrate(15);
       }
@@ -1057,20 +1115,17 @@
       const q = questions[currentIndex];
       const isCorrect = key === q.answer;
 
-      // Update counters
       userStats.solvedToday++;
       if (isCorrect) {
         userStats.correctToday++;
         triggerConfetti();
       }
 
-      // Update UI stats
       const rate = Math.round((userStats.correctToday / userStats.solvedToday) * 100);
       document.getElementById('today-accuracy').textContent = `${rate}%`;
       document.getElementById('today-solved-count').innerHTML = `${userStats.solvedToday}<span class="text-xs font-normal text-slate-400 ml-0.5">問</span>`;
       document.getElementById('stat-accuracy-rate').textContent = `${rate}%`;
 
-      // Highlight options
       q.choices.forEach(c => {
         const btn = document.getElementById(`choice-${c.key}`);
         btn.disabled = true;
@@ -1088,7 +1143,6 @@
         }
       });
 
-      // Show Feedback Box (Optimized with [結論] & [理由] high contrast)
       const expBox = document.getElementById('explanation-box');
       const headingEl = document.getElementById('feedback-heading');
       const textEl = document.getElementById('explanation-text');
@@ -1110,67 +1164,6 @@
         </div>
       `;
       refEl.innerHTML = `<i data-lucide="book-open" class="w-3.5 h-3.5"></i> <span>根拠：${q.ref}</span>`;
-
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function selectChoice(key) {
-      if (isAnswered) return;
-      isAnswered = true;
-      selectedOption = key;
-
-      const questions = getFilteredQuestions();
-      const q = questions[currentIndex];
-      const isCorrect = key === q.answer;
-
-      // Update counters
-      userStats.solvedToday++;
-      if (isCorrect) {
-        userStats.correctToday++;
-        triggerConfetti();
-      }
-
-      // Update UI stats
-      const rate = Math.round((userStats.correctToday / userStats.solvedToday) * 100);
-      document.getElementById('today-accuracy').textContent = `${rate}%`;
-      document.getElementById('today-solved-count').innerHTML = `${userStats.solvedToday}<span class="text-xs font-normal text-slate-400 ml-0.5">問</span>`;
-      document.getElementById('stat-accuracy-rate').textContent = `${rate}%`;
-
-      // Highlight options
-      q.choices.forEach(c => {
-        const btn = document.getElementById(`choice-${c.key}`);
-        btn.disabled = true;
-
-        if (c.key === q.answer) {
-          btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-950/40 text-emerald-200 flex items-start gap-3 text-xs sm:text-sm shadow-md";
-          const badge = btn.querySelector('span');
-          badge.className = "w-6 h-6 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center shrink-0 mt-0.5 text-xs";
-        } else if (c.key === key && !isCorrect) {
-          btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-rose-500 bg-rose-950/40 text-rose-200 flex items-start gap-3 text-xs sm:text-sm";
-          const badge = btn.querySelector('span');
-          badge.className = "w-6 h-6 rounded-lg bg-rose-500 text-slate-950 font-black flex items-center justify-center shrink-0 mt-0.5 text-xs";
-        } else {
-          btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-500 opacity-60 flex items-start gap-3 text-xs sm:text-sm";
-        }
-      });
-
-      // Show Feedback Box
-      const expBox = document.getElementById('explanation-box');
-      const headingEl = document.getElementById('feedback-heading');
-      const textEl = document.getElementById('explanation-text');
-      const refEl = document.getElementById('manual-ref');
-
-      expBox.classList.remove('hidden');
-      if (isCorrect) {
-        expBox.className = "rounded-xl p-4 border border-emerald-500/50 bg-emerald-950/30 text-emerald-300 transition-all duration-300 mb-5";
-        headingEl.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i> <span class="text-emerald-300">○ せいかい！</span>`;
-      } else {
-        expBox.className = "rounded-xl p-4 border border-rose-500/50 bg-rose-950/30 text-rose-300 transition-all duration-300 mb-5";
-        headingEl.innerHTML = `<i data-lucide="alert-circle" class="w-5 h-5 text-rose-400"></i> <span class="text-rose-300">× おしい！ 正解は【${q.answer}】</span>`;
-      }
-
-      textEl.textContent = q.explanation;
-      refEl.innerHTML = `<i data-lucide="book-open" class="w-3.5 h-3.5"></i> <span>出典・根拠：${q.ref}</span>`;
 
       if (window.lucide) lucide.createIcons();
     }
@@ -1234,7 +1227,7 @@
       document.getElementById('manual-modal').classList.add('hidden');
     }
 
-    // Guide & Purpose Modal controls (NEW)
+    // Guide & Purpose Modal controls
     function openGuideModal() {
       document.getElementById('guide-modal').classList.remove('hidden');
     }
