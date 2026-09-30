@@ -134,22 +134,52 @@
       </div>
     </div>
 
-    <!-- Mobile Horizontal Category Chips (スマホ専用: カテゴリ切替 → クイズの自然な導線) -->
-    <div class="lg:hidden mb-2.5">
-      <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1 px-1">
-        <span class="flex items-center gap-1 font-semibold text-slate-300">
-          <i data-lucide="layers" class="w-3 h-3 text-amber-400"></i> テーマ選択
-        </span>
-        <span class="text-[10px] text-slate-500">左右スワイプで選択</span>
+    <!-- NEW: 🔰新入団希望者向け 体験7問スタートバナー -->
+    <div id="trial-banner" class="mb-3.5 p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-emerald-500/20 border border-amber-500/40 shadow-lg relative overflow-hidden transition-all duration-300 hover:border-amber-400">
+      <div class="flex items-center justify-between gap-3 relative z-10">
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-slate-950 flex items-center justify-center shrink-0 font-black shadow-md">
+            <span class="text-lg sm:text-xl">🔰</span>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
+              <span class="px-2 py-0.5 rounded text-[10px] sm:text-xs font-black bg-amber-400 text-slate-950 uppercase tracking-wider">まずはここから！</span>
+              <span class="text-[11px] sm:text-xs text-amber-200 font-bold truncate">新入団・体験希望者向け</span>
+            </div>
+            <h3 class="text-xs sm:text-sm md:text-base font-black text-white truncate">
+              越谷メソッドの核心を体感する「厳選7問クイズ」
+            </h3>
+            <p class="text-[10px] sm:text-xs text-slate-300 hidden sm:block mt-0.5">
+              理由がわかると野球はもっと面白い！入団前に知っておきたい7つの掟をスピード体験
+            </p>
+          </div>
+        </div>
+
+        <div class="shrink-0 flex items-center gap-2">
+          <button onclick="startTrialMode()" class="px-3.5 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs sm:text-sm font-black rounded-xl shadow-md flex items-center gap-1.5 active:scale-95 transition-all">
+            <span>挑戦する</span>
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 fill-slate-950"></i>
+          </button>
+        </div>
       </div>
-      <div id="mobile-category-chips" class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar -mx-1 px-1 scroll-smooth">
-        <!-- Rendered dynamically by JS -->
-      </div>
+      <!-- Background subtle baseball glow pattern -->
+      <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
     </div>
 
-    <!-- Mobile-First 3-Column / Re-ordered Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-5 items-start">
+    <!-- Active Trial Mode Header (Only shown during Trial Mode) -->
+    <div id="trial-active-bar" class="hidden mb-3 p-2.5 sm:p-3 rounded-xl bg-amber-500/20 border border-amber-400/50 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-black px-2 py-0.5 rounded bg-amber-400 text-slate-950">🔰 体験7問モード中</span>
+        <span id="trial-step-badge" class="text-xs font-bold text-amber-300 font-mono">1 / 7 問</span>
+      </div>
+      <button onclick="exitTrialMode()" class="text-xs text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 flex items-center gap-1 transition">
+        <i data-lucide="log-out" class="w-3 h-3"></i>
+        <span>通常モードへ戻る</span>
+      </button>
+    </div>
 
+    <!-- Mobile Horizontal Category Chips (スマホ専用: カテゴリ切替 → クイズの自然な導線) -->
+    <div id="category-chips-wrapper" class="lg:hidden mb-2.5">
       <!-- Center (Quiz Main Container) -> Placed FIRST on Mobile (order-1), CENTER on PC (lg:order-2) -->
       <main class="order-1 lg:order-2 lg:col-span-6 space-y-3 sm:space-y-4">
         <div class="bg-slate-800/95 rounded-2xl p-3.5 sm:p-6 border border-slate-700/80 card-glow relative overflow-hidden">
@@ -207,7 +237,7 @@
               <i data-lucide="chevron-left" class="w-4 h-4"></i> 前へ
             </button>
 
-            <button onclick="randomQuestion()" class="flex items-center gap-1 px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-amber-400 hover:bg-slate-700/50 transition">
+            <button id="random-btn" onclick="randomQuestion()" class="flex items-center gap-1 px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-amber-400 hover:bg-slate-700/50 transition">
               <i data-lucide="shuffle" class="w-3.5 h-3.5"></i> <span class="hidden xs:inline">ランダム</span>
             </button>
 
@@ -448,58 +478,59 @@
           <div class="space-y-2">
             <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 flex items-start gap-2.5">
               <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-black flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
-              <div>
-                <b class="text-white">毎日10〜15分、家や移動中にサクッと解く</b>
-                <p class="text-[11px] text-slate-400 mt-0.5">
-                  「6日連続」などのストリーク記録を伸ばしながら、座学はグラウンド外で自習。グラウンドでの練習時間を100%実戦に集中させます。
-                </p>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 flex items-start gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-black flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
-              <div>
-                <b class="text-white">練習前や試合前に「今日のテーマ」を復習する</b>
-                <p class="text-[11px] text-slate-400 mt-0.5">
-                  「今日はバント処理の練習」「今日は走塁判断」など、その日の練習テーマに合わせて左側のカテゴリーを選んで予習します。
-                </p>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 flex items-start gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-black flex items-center justify-center text-[10px] shrink-0 mt-0.5">3</span>
-              <div>
-                <b class="text-white">間違えたら「マニュアル要点集」で理由を確認</b>
-                <p class="text-[11px] text-slate-400 mt-0.5">
-                  ただ答えを丸暗記するのではなく、解説欄の「なぜその判断なのか」とマニュアル記載の根拠をしっかり読み込みます。
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. Confidential Notice -->
-        <div class="p-3 bg-amber-950/20 rounded-xl border border-amber-600/30 text-amber-200/90 text-xs flex items-start gap-2.5">
-          <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
-          <div>
-            <b>【対外秘について】</b><br>
-            第2章「バッテリー論」および第7章「カウント別配球・打撃」は他チームへの流出を防ぐため対外非公開です。ヘッダーの「チーム限定認証」からパスコードを入力して学習してください。
-          </div>
-        </div>
-
+  <!-- NEW: Trial Completion Modal (体験7問クリア時の修了画面) -->
+  <div id="trial-complete-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center hidden p-3 sm:p-5">
+    <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-amber-400/50 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative overflow-hidden text-center">
+      
+      <!-- Top Trophy / Badge icon -->
+      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-amber-500/20">
+        <i data-lucide="award" class="w-10 h-10 sm:w-12 sm:h-12"></i>
       </div>
 
-      <!-- Modal Footer -->
-      <div class="p-3.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
-        <span class="text-[11px] text-slate-400">越谷ボーイズ 指導指針 β版</span>
-        <button onclick="closeGuideModal()" class="px-5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold transition shadow">
-          理解した（閉じる）
+      <span class="px-3 py-1 rounded-full text-[11px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/40 uppercase tracking-widest">
+        越谷ボーイズ 体験修了証
+      </span>
+
+      <h3 class="text-xl sm:text-2xl font-black text-white mt-2 mb-1">
+        体験7問クリア おめでとう！
+      </h3>
+      
+      <p class="text-xs sm:text-sm text-amber-300/90 font-bold mb-3">
+        「理由」がわかると、野球はもっと面白い。
+      </p>
+
+      <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700/80 text-left text-xs text-slate-200 leading-relaxed mb-4 space-y-1.5">
+        <p>
+          越谷ボーイズでは、ただ「打て」「走れ」と教えるのではなく、**「なぜそう動くのか」を選手自身が理解して動く自立した野球脳**を育てています。
+        </p>
+        <p class="text-slate-400 text-[11px]">
+          この7問は全200問のほんの一部です。グラウンドで瞬時に判断できる武器を、ぜひ一緒に身につけませんか？
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <a href="https://koshigaya-boys.jp/" target="_blank" rel="noopener noreferrer" class="w-full block py-2.5 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-lg transition">
+          ⚾ 見学・体験練習のご案内（公式HP）
+        </a>
+
+        <button onclick="continueFullQuiz()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm rounded-xl border border-slate-700 transition">
+          全200問の本格学習に挑戦する
+        </button>
+
+        <button onclick="restartTrialQuiz()" class="w-full py-1.5 text-[11px] text-slate-400 hover:text-white transition">
+          もう一度7問を解く
         </button>
       </div>
     </div>
   </div>
 
   <script>
+    // 厳選7問のIDリスト（掟・打撃・走塁・守備・投手捕手・用語から各1問、新入団希望者が「なるほど！」と感動するテーマ）
+    const trialQuestionIds = [1, 3, 59, 4, 8, 5, 11];
+    let isTrialMode = false;
+    let trialIndex = 0;
+    let trialCorrectCount = 0;
+
     // Detailed questions extracted directly from the Koshigaya Method Manual & CSV requirements
     const quizDatabase = [
       {
@@ -729,13 +760,63 @@
     let selectedOption = null;
     let isAnswered = false;
 
-    // Filter questions based on access
+    // Filter questions based on access and trial mode
     function getFilteredQuestions() {
+      if (isTrialMode) {
+        return trialQuestionIds.map(id => quizDatabase.find(q => q.id === id)).filter(Boolean);
+      }
       return quizDatabase.filter(q => {
         if (q.confidential && !isUnlocked) return false;
         if (currentFilter === 'all') return true;
         return q.category === currentFilter;
       });
+    }
+
+    // 体験7問モード開始
+    function startTrialMode() {
+      isTrialMode = true;
+      trialIndex = 0;
+      trialCorrectCount = 0;
+      currentIndex = 0;
+
+      // UI表示の切り替え
+      document.getElementById('trial-banner').classList.add('hidden');
+      document.getElementById('trial-active-bar').classList.remove('hidden');
+      document.getElementById('category-chips-wrapper').classList.add('opacity-40', 'pointer-events-none');
+      const randomBtn = document.getElementById('random-btn');
+      if (randomBtn) randomBtn.classList.add('hidden');
+
+      renderCurrentQuestion();
+
+      // スムーズスクロールで問題へフォーカス
+      const mainEl = document.querySelector('main');
+      if (mainEl) mainEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // 通常モードへ戻る
+    function exitTrialMode() {
+      isTrialMode = false;
+      document.getElementById('trial-banner').classList.remove('hidden');
+      document.getElementById('trial-active-bar').classList.add('hidden');
+      document.getElementById('category-chips-wrapper').classList.remove('opacity-40', 'pointer-events-none');
+      const randomBtn = document.getElementById('random-btn');
+      if (randomBtn) randomBtn.classList.remove('hidden');
+      
+      currentIndex = 0;
+      renderCategories();
+      renderCurrentQuestion();
+    }
+
+    // 体験終了モーダルからの再スタート
+    function restartTrialQuiz() {
+      document.getElementById('trial-complete-modal').classList.add('hidden');
+      startTrialMode();
+    }
+
+    // 全200問へ進む
+    function continueFullQuiz() {
+      document.getElementById('trial-complete-modal').classList.add('hidden');
+      exitTrialMode();
     }
 
     function renderCategories() {
@@ -854,11 +935,31 @@
     function navQuestion(offset) {
       const questions = getFilteredQuestions();
       if (!questions.length) return;
-      currentIndex = (currentIndex + offset + questions.length) % questions.length;
+
+      if (isTrialMode) {
+        // 体験モード時の進捗遷移
+        const nextIdx = currentIndex + offset;
+        if (nextIdx >= questions.length) {
+          // 7問クリア！修了モーダル表示
+          showTrialCompleteModal();
+          return;
+        }
+        if (nextIdx < 0) return;
+        currentIndex = nextIdx;
+      } else {
+        currentIndex = (currentIndex + offset + questions.length) % questions.length;
+      }
       renderCurrentQuestion();
     }
 
+    function showTrialCompleteModal() {
+      triggerConfetti();
+      document.getElementById('trial-complete-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
     function randomQuestion() {
+      if (isTrialMode) return;
       const questions = getFilteredQuestions();
       if (questions.length <= 1) return;
       let newIdx;
@@ -882,9 +983,21 @@
 
       const q = questions[currentIndex];
 
-      // Tags & Header
-      document.getElementById('q-category-tag').textContent = q.category;
-      document.getElementById('q-index-tag').textContent = `問題 ${q.id} / 200`;
+      // 体験モード時のインジケーター更新
+      if (isTrialMode) {
+        document.getElementById('trial-step-badge').textContent = `${currentIndex + 1} / ${questions.length} 問`;
+        document.getElementById('q-category-tag').className = "px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-black bg-amber-400 text-slate-950 shadow-sm";
+        document.getElementById('q-category-tag').textContent = `🔰 体験：${q.category}`;
+        document.getElementById('q-index-tag').textContent = `第 ${currentIndex + 1} 問（全7問）`;
+        document.getElementById('next-btn').innerHTML = currentIndex === questions.length - 1 
+          ? `結果を見る <i data-lucide="award" class="w-4 h-4 ml-1"></i>`
+          : `次の問題 <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>`;
+      } else {
+        document.getElementById('q-category-tag').className = "px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30";
+        document.getElementById('q-category-tag').textContent = q.category;
+        document.getElementById('q-index-tag').textContent = `問題 ${q.id} / 200`;
+        document.getElementById('next-btn').innerHTML = `次へ <i data-lucide="chevron-right" class="w-4 h-4"></i>`;
+      }
       
       // Star difficulty
       const diffEl = document.getElementById('q-difficulty');
@@ -913,7 +1026,6 @@
         const btn = document.createElement('button');
         btn.id = `choice-${c.key}`;
         btn.onclick = () => selectChoice(c.key);
-        // Minimum height 52px for thumb friendliness and padding
         btn.className = `option-btn w-full text-left p-3 sm:p-3.5 min-h-[52px] rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-700/60 transition flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm text-slate-200`;
         btn.innerHTML = `
           <span class="w-6 h-6 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-bold text-amber-400 shrink-0 mt-0.5 text-xs">
