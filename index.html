@@ -1,578 +1,64 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>越谷メソッド - KOSHIGAYA BOYS QUIZ</title>
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://spc-jp.github.io/koshigaya-method-app/favicon.png">
-  <link rel="apple-touch-icon" href="https://spc-jp.github.io/koshigaya-method-app/favicon.png">
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Canvas Confetti for celebrating high score/correct streaks -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
-    
-    body {
-      font-family: 'Noto Sans JP', 'M PLUS Rounded 1c', sans-serif;
-      background: radial-gradient(circle at top right, #1e293b, #0f172a 70%);
-      color: #f1f5f9;
-      min-height: 100vh;
-    }
-
-    /* Custom scrollbars */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.6);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(100, 116, 139, 0.5);
-      border-radius: 9999px;
-    }
-
-    /* Hide scrollbar for clean horizontal swipe tabs */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    .badge-glow {
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
-    }
-    .card-glow {
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-    }
-    .option-btn {
-      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-      -webkit-tap-highlight-color: transparent;
-    }
-    .option-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-    }
-    .option-btn:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<meta name="description" content="越谷ボーイズの野球クイズ。毎日5問、理由を知って、間違えた問題を復習しよう。">
+<title>越谷メソッド - KOSHIGAYA BOYS QUIZ</title>
+<link rel="icon" type="image/png" href="https://spc-jp.github.io/koshigaya-method-app/favicon.png">
+<link rel="apple-touch-icon" href="https://spc-jp.github.io/koshigaya-method-app/favicon.png">
+<script defer src="https://unpkg.com/lucide@latest"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+:root{color-scheme:dark;--bg:#0f172a;--card:#1e293b;--line:#3b4b62;--muted:#bdc9d9;--gold:#fbbf24;--cyan:#67e8f9;--green:#6ee7b7}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 90% 0,#233550,var(--bg) 65%);color:#f1f5f9;font-family:'Noto Sans JP',sans-serif;font-size:16px;line-height:1.7;min-height:100vh}button,a,input{font:inherit}button{cursor:pointer;touch-action:manipulation}button:disabled{cursor:default;opacity:.45}button,a,input{outline-offset:4px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--cyan)}button{color:inherit}a{color:var(--cyan)}[hidden]{display:none!important}.wrap{max-width:1180px;margin:auto;padding:22px 24px 40px}.header{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px;color:white;text-decoration:none;min-width:0}.logo{width:54px;height:54px;object-fit:contain;border:1px solid #fbbf2466;border-radius:14px;background:#0f172a;padding:3px}.brand h1{font-size:24px;margin:0;line-height:1.4}.brand small{font-size:12px;letter-spacing:.08em;color:var(--gold)}.tools{display:flex;gap:8px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 16px;border:1px solid var(--line);border-radius:12px;background:#25344a;font-weight:700;text-decoration:none;line-height:1.5}.btn:hover:not(:disabled){background:#334761}.btn.primary{background:var(--gold);border-color:var(--gold);color:#172033}.btn.primary:hover:not(:disabled){background:#fcd34d}.btn.soft{background:#163344;color:#a5f3fc;border-color:#287082}.btn svg{width:19px;height:19px;flex-shrink:0}.tools .btn{font-size:14px}.intro{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}.intro h2{font-size:22px;margin:0}.intro p{margin:0;color:var(--muted);font-size:14px}.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}.action{display:flex;align-items:center;gap:12px;text-align:left;background:#1e293b;border:1px solid var(--line);border-radius:16px;min-height:88px;padding:16px}.action:hover:not(:disabled){background:#293b52;border-color:var(--gold)}.action svg{width:25px;height:25px;flex-shrink:0;color:var(--gold)}.action strong{display:block;font-size:17px}.action small{display:block;color:var(--muted);font-size:13px;margin-top:3px}.action.daily{background:linear-gradient(125deg,#fbbf24,#f59e0b);color:#172033;border:0}.action.daily svg,.action.daily small{color:#263044}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:20px;align-items:start}.learning{min-width:0}.category-panel{margin-bottom:16px}.section-label{display:flex;gap:8px;align-items:center;font-size:14px;font-weight:700;color:var(--muted);margin:0 0 9px}.section-label svg{width:18px;height:18px}.categories{display:flex;gap:8px;flex-wrap:wrap}.category{display:flex;align-items:center;gap:6px;background:#182438;border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-height:46px;font-size:14px;font-weight:700}.category svg{width:17px;height:17px}.category[aria-pressed=true]{background:#fbbf2420;border-color:var(--gold);color:#fde68a}.category:hover{border-color:#8ca0bb}.mode-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:12px 16px;border:1px solid #fbbf2460;border-radius:12px;background:#fbbf2410}.mode-bar strong{color:#fde68a}.mode-bar button{font-size:14px;min-height:44px}.quiz{background:linear-gradient(160deg,#22324a,#1b283d);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 16px 40px #0003;scroll-margin-top:16px}.qmeta{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px}.tag{color:#a5f3fc;background:#67e8f910;border:1px solid #67e8f940;border-radius:7px;padding:3px 9px;font-weight:700}.question{font-size:21px;line-height:1.85;margin:0 0 8px;overflow-wrap:anywhere}.hint{font-size:14px;color:var(--muted);margin:0 0 18px}.choices{display:grid;gap:12px}.choice{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;min-height:68px;border:1px solid #52657e;border-radius:13px;padding:16px;background:#101d30;color:#f1f5f9;font-size:17px;line-height:1.8;transition:background .15s,border-color .15s}.choice:hover:not(:disabled){border-color:var(--gold);background:#293951}.choice:disabled{opacity:1}.letter{display:flex;align-items:center;justify-content:center;width:30px;height:30px;flex-shrink:0;border-radius:8px;border:1px solid #62748d;font-weight:900;color:var(--gold);line-height:1}.choice.correct{background:#064e3b66;border:2px solid #34d399}.choice.wrong{background:#88133744;border:2px solid #fb7185}.choice.dim{opacity:.55}.choice-text{flex:1}.choice-result{display:block;font-size:14px;font-weight:700;color:var(--green)}.wrong .choice-result{color:#fda4af}.feedback{margin-top:22px;border-top:1px solid var(--line);padding-top:20px}.feedback h3{margin:0 0 14px;font-size:19px}.feedback h3.good{color:var(--green)}.feedback h3.bad{color:#fda4af}.explain-item{margin:0 0 12px;padding:15px 17px;background:#0f172a88;border-radius:12px}.explain-item h4{color:var(--gold);font-size:14px;margin:0 0 6px}.explain-item p{margin:0;font-size:16px;line-height:1.9}.explain-item.practice{border-left:3px solid var(--cyan)}.reference{font-size:13px;color:var(--muted);margin:12px 0}.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:18px;margin-top:22px}.nav .primary{min-width:160px}.nav-note{font-size:13px;text-align:right;color:var(--muted);margin:8px 0 0}.side{display:grid;gap:16px}.panel{background:#1e293bdd;border:1px solid var(--line);border-radius:16px;padding:20px}.panel h2{font-size:17px;margin:0 0 14px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{border-radius:12px;padding:14px 8px;background:#0f172ab3;text-align:center}.stat dt{font-size:13px;color:var(--muted)}.stat dd{margin:4px 0 0;font-size:30px;font-weight:900;color:var(--gold);line-height:1.4}.stat dd span{font-size:14px;font-weight:400;margin-left:3px}.stat:last-child dd{color:var(--green)}.stats{margin:0}.muted{color:var(--muted);font-size:14px}.full{width:100%}.panel p{margin:12px 0;font-size:14px;color:var(--muted)}.steps{padding-left:24px;font-size:15px;color:var(--muted)}.steps li{margin:10px 0}.steps strong{color:white}.footer{font-size:12px;color:var(--muted);margin-top:24px;text-align:center}.notice{font-size:14px;background:#78350f66;border:1px solid #d97706;padding:12px;border-radius:10px;margin:12px 0}.empty{text-align:center;padding:32px 8px}.empty h2{font-size:21px}.empty p{color:var(--muted)}dialog{width:min(640px,calc(100% - 24px));max-height:90dvh;border:1px solid #64748b;border-radius:20px;padding:0;color:#f1f5f9;background:#17243a;box-shadow:0 20px 70px #0009}dialog::backdrop{background:#020617cc;backdrop-filter:blur(4px)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 22px;border-bottom:1px solid var(--line)}.dialog-head h2{margin:0;font-size:19px}.dialog-body{padding:22px;overflow-wrap:anywhere}.dialog-body p{line-height:1.9}.dialog-actions{display:grid;gap:10px;margin-top:20px}.manual-entry{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--line)}.manual-entry h3{font-size:16px;color:var(--gold);margin:0 0 8px}.manual-entry p{margin:0}.field{display:block;width:100%;min-height:52px;background:#0f172a;border:1px solid #64748b;border-radius:10px;padding:12px;color:white;margin-top:8px}.error{color:#fda4af;font-size:14px}.summary-score{font-size:42px;font-weight:900;color:var(--gold);margin:10px 0!important}.summary-score span{font-size:18px;color:var(--muted)}
+@media(max-width:800px){.wrap{padding:16px}.workspace{grid-template-columns:minmax(0,1fr)}.side{grid-template-columns:1fr 1fr}.side .how{display:none}.actions{gap:8px}.action{padding:13px;gap:8px}.action strong{font-size:15px}.action small{font-size:12px}.intro{display:block}.intro p{margin-top:4px}.quiz{padding:22px}.brand h1{font-size:21px}}
+@media(max-width:540px){.wrap{padding:12px 12px 28px}.header{gap:8px;flex-wrap:wrap;margin-bottom:18px;padding-bottom:12px}.logo{width:42px;height:42px}.brand{gap:8px}.brand h1{font-size:20px}.brand small{font-size:10px}.tools{gap:6px}.tools .btn{padding:8px 10px;min-height:44px;font-size:13px}.tools .btn svg{display:none}.intro h2{font-size:19px}.intro p{font-size:13px}.actions{grid-template-columns:1fr 1fr;margin-bottom:20px}.action{min-height:78px}.action.daily{grid-column:1/-1;min-height:64px;padding:12px 16px}.action.daily strong{font-size:17px}.action.daily small{display:inline}.action svg{width:21px;height:21px}.categories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.category{padding:9px 5px;justify-content:center;font-size:13px;gap:4px;white-space:normal}.category svg{width:15px;height:15px}.quiz{padding:18px 14px;border-radius:16px}.question{font-size:19px;line-height:1.85}.choice{font-size:16px;padding:14px 12px;gap:10px;min-height:70px}.letter{width:27px;height:27px}.qmeta{font-size:13px;margin-bottom:16px}.explain-item{padding:13px}.nav .primary{min-width:0;flex:1}.nav .btn{font-size:15px}.side{grid-template-columns:1fr}.mode-bar{padding:10px;font-size:14px}.mode-bar button{padding:8px;font-size:12px}.footer{text-align:left}.dialog-body{padding:18px}.dialog-head{padding:16px}.dialog-head h2{font-size:17px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
 </head>
-<body class="p-2 sm:p-4 md:p-6 flex flex-col justify-between">
-
-  <div class="max-w-7xl mx-auto w-full">
-    <!-- Slimmed & Responsive Header -->
-    <header class="flex items-center justify-between border-b border-slate-700/80 pb-3 mb-3 sm:mb-4 gap-2">
-      <!-- Clickable Logo & Brand Group (先頭へ戻る) -->
-      <a href="#" onclick="returnToTop(event)" class="flex items-center space-x-2.5 sm:space-x-3.5 min-w-0 group cursor-pointer select-none" title="トップへ戻る">
-        <div class="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-slate-900 border border-amber-400/40 p-0.5 sm:p-1 flex items-center justify-center shadow-lg shadow-amber-500/10 overflow-hidden relative shrink-0 transition-transform duration-200 group-hover:scale-105 group-active:scale-95">
-          <img 
-            src="https://spc-jp.github.io/koshigaya-method-app/favicon.png" 
-            alt="越谷ボーイズ ロゴ" 
-            class="w-full h-full object-contain rounded-lg sm:rounded-xl"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-          >
-          <!-- Fallback text badge if image fails to load -->
-          <div class="w-full h-full rounded-lg sm:rounded-xl bg-gradient-to-tr from-amber-500 to-red-600 hidden items-center justify-center font-black text-white text-base sm:text-xl tracking-tighter">
-            KB
-          </div>
-        </div>
-        <div class="min-w-0">
-          <div class="flex items-center gap-1.5 mb-0.5">
-            <span class="text-[10px] sm:text-xs font-semibold px-1.5 py-0.2 sm:px-2 sm:py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 whitespace-nowrap">公式</span>
-            <span class="text-[10px] sm:text-xs text-slate-400 truncate hidden xs:inline">マニュアル準拠 β版</span>
-          </div>
-          <h1 class="text-base sm:text-xl md:text-2xl font-black tracking-wide text-white flex items-center gap-1.5 truncate group-hover:text-amber-300 transition-colors">
-            越谷メソッド <span class="text-[10px] sm:text-xs font-bold text-amber-400 tracking-widest uppercase hidden sm:inline">Koshigaya Boys Quiz</span>
-          </h1>
-        </div>
-      </a>
-
-      <!-- Streaks & Global Controls (Compact & Single-row on mobile) -->
-      <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-        <!-- Consecutive days badge -->
-        <div class="flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 bg-slate-800/90 border border-amber-500/40 rounded-full shadow-inner badge-glow text-[11px] sm:text-xs font-bold text-amber-300">
-          <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-400 fill-orange-500 animate-pulse"></i>
-          <span>6日連続</span>
-        </div>
-
-        <!-- How to Use & Purpose Guide Button -->
-        <button onclick="openGuideModal()" class="flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition border border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 shadow-sm" title="使い方と目的">
-          <i data-lucide="help-circle" class="w-3.5 h-3.5 text-cyan-400"></i>
-          <span class="hidden sm:inline">使い方・目的</span>
-          <span class="sm:hidden">ガイド</span>
-        </button>
-        
-        <!-- Confidential Mode Indicator -->
-        <button id="auth-lock-btn" onclick="toggleConfidentialAccess()" class="flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition border border-slate-600 bg-slate-800 hover:bg-slate-700 text-slate-300" title="チーム限定認証">
-          <i id="lock-icon" data-lucide="lock" class="w-3.5 h-3.5 text-amber-400"></i>
-          <span id="lock-label" class="hidden sm:inline">チーム限定認証</span>
-          <span class="sm:hidden">認証</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- Overall Progress bar (Slimmed for Mobile) -->
-    <div class="bg-slate-800/80 backdrop-blur rounded-xl sm:rounded-2xl p-2.5 sm:p-4 border border-slate-700/60 mb-3 sm:mb-4 card-glow">
-      <div class="flex items-center justify-between text-xs sm:text-sm mb-1.5 gap-2">
-        <div class="flex items-center gap-2">
-          <span class="text-slate-400 font-medium text-[11px] sm:text-xs">進み具合</span>
-          <span class="text-sm sm:text-lg font-black text-amber-400 font-mono tracking-tight" id="progress-ratio-text">59 / 200 問</span>
-        </div>
-        <div class="flex items-center gap-2.5 sm:gap-4 text-[11px] sm:text-xs">
-          <span class="text-emerald-400 flex items-center gap-0.5"><i data-lucide="check-circle" class="w-3 h-3"></i> <b id="stat-correct-count">49</b></span>
-          <span class="text-rose-400 flex items-center gap-0.5"><i data-lucide="x-circle" class="w-3 h-3"></i> <b id="stat-wrong-count">10</b></span>
-          <span class="text-cyan-300 flex items-center gap-0.5 font-semibold font-mono"><i data-lucide="percent" class="w-3 h-3"></i> <b id="stat-accuracy-rate">83%</b></span>
-        </div>
-      </div>
-      <div class="w-full bg-slate-900 rounded-full h-2.5 sm:h-3 overflow-hidden p-0.5 border border-slate-700">
-        <div id="global-progress-bar" class="bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-400 h-full rounded-full transition-all duration-500" style="width: 29.5%"></div>
-      </div>
-    </div>
-
-    <!-- 🔰新入団希望者向け 体験7問スタートバナー -->
-    <div id="trial-banner" class="mb-3.5 p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-emerald-500/20 border border-amber-500/40 shadow-lg relative overflow-hidden transition-all duration-300 hover:border-amber-400">
-      <div class="flex items-center justify-between gap-3 relative z-10">
-        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-slate-950 flex items-center justify-center shrink-0 font-black shadow-md">
-            <span class="text-lg sm:text-xl">🔰</span>
-          </div>
-          <div class="min-w-0">
-            <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
-              <span class="px-2 py-0.5 rounded text-[10px] sm:text-xs font-black bg-amber-400 text-slate-950 uppercase tracking-wider">まずはここから！</span>
-              <span class="text-[11px] sm:text-xs text-amber-200 font-bold truncate">新入団・体験希望者向け</span>
-            </div>
-            <h3 class="text-xs sm:text-sm md:text-base font-black text-white truncate">
-              越谷メソッドの核心を体感する「厳選7問クイズ」
-            </h3>
-            <p class="text-[10px] sm:text-xs text-slate-300 hidden sm:block mt-0.5">
-              理由がわかると野球はもっと面白い！入団前に知っておきたい7つの掟をスピード体験
-            </p>
-          </div>
-        </div>
-
-        <div class="shrink-0 flex items-center gap-2">
-          <button onclick="startTrialMode()" class="px-3.5 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs sm:text-sm font-black rounded-xl shadow-md flex items-center gap-1.5 active:scale-95 transition-all">
-            <span>挑戦する</span>
-            <i data-lucide="sparkles" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 fill-slate-950"></i>
-          </button>
-        </div>
-      </div>
-      <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
-    </div>
-
-    <!-- Active Trial Mode Header (Only shown during Trial Mode) -->
-    <div id="trial-active-bar" class="hidden mb-3 p-2.5 sm:p-3 rounded-xl bg-amber-500/20 border border-amber-400/50 flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2">
-        <span class="text-xs font-black px-2 py-0.5 rounded bg-amber-400 text-slate-950">🔰 体験7問モード中</span>
-        <span id="trial-step-badge" class="text-xs font-bold text-amber-300 font-mono">1 / 7 問</span>
-      </div>
-      <button onclick="exitTrialMode()" class="text-xs text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 flex items-center gap-1 transition">
-        <i data-lucide="log-out" class="w-3 h-3"></i>
-        <span>通常モードへ戻る</span>
-      </button>
-    </div>
-
-    <!-- Mobile Horizontal Category Chips (スマホ専用: カテゴリ切替 → クイズの自然な導線) -->
-    <div id="category-chips-wrapper" class="lg:hidden mb-2.5 overflow-x-auto no-scrollbar flex items-center gap-1.5 pb-1">
-      <div id="mobile-category-chips" class="flex items-center gap-1.5 shrink-0">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-
-    <!-- Main Grid Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-5">
-
-      <!-- Center (Quiz Main Container) -> Placed FIRST on Mobile (order-1), CENTER on PC (lg:order-2) -->
-      <main class="order-1 lg:order-2 lg:col-span-6 space-y-3 sm:space-y-4">
-        <div class="bg-slate-800/95 rounded-2xl p-3.5 sm:p-6 border border-slate-700/80 card-glow relative overflow-hidden">
-          
-          <!-- Top meta bar of Question -->
-          <div class="flex items-center justify-between pb-2.5 sm:pb-3 mb-3 sm:mb-4 border-b border-slate-700/80 gap-2">
-            <div class="flex items-center gap-2">
-              <span id="q-category-tag" class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                掟の実践
-              </span>
-              <span id="q-index-tag" class="text-[11px] sm:text-xs font-mono font-bold text-slate-400">
-                問題 59 / 200
-              </span>
-            </div>
-            
-            <!-- Difficulty Stars -->
-            <div class="flex items-center gap-0.5 text-amber-400" id="q-difficulty">
-              <span class="text-[10px] sm:text-xs font-semibold mr-1 text-slate-400">難易度</span>
-              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
-              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
-              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
-            </div>
-          </div>
-
-          <!-- Question Content -->
-          <div class="mb-4 sm:mb-6">
-            <h2 id="q-question-text" class="text-sm sm:text-base md:text-lg font-bold text-white leading-relaxed">
-              追い込まれた後、「意識は逆方向、目付けはインコース」とする理由の1つはどれか？
-            </h2>
-            <div id="q-note" class="mt-1.5 text-[11px] sm:text-xs text-amber-300/80 font-medium hidden"></div>
-          </div>
-
-          <!-- Choices A, B, C, D (Optimized for Mobile Thumb Taps, min-height 52px) -->
-          <div id="choices-container" class="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-            <!-- Rendered by JS -->
-          </div>
-
-          <!-- Feedback & Explanation (Hidden until answered) -->
-          <div id="explanation-box" class="hidden rounded-xl p-3.5 sm:p-4 border transition-all duration-300 mb-3 sm:mb-5">
-            <div class="flex items-center gap-2 mb-2 font-black text-sm sm:text-base" id="feedback-heading">
-              <!-- Result Icon & Title -->
-            </div>
-            <div id="explanation-text" class="text-xs sm:text-sm text-slate-200 leading-relaxed space-y-2">
-              <!-- Explanation details -->
-            </div>
-            <div id="manual-ref" class="mt-2.5 pt-2 border-t border-slate-700/60 text-[10px] sm:text-[11px] text-amber-300/90 font-mono flex items-center gap-1.5">
-              <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
-              <span>参考：マニュアル 第3章 打撃の考え方 (3-3)</span>
-            </div>
-          </div>
-
-          <!-- Bottom Control Bar -->
-          <div class="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-slate-700/80 gap-2">
-            <button id="prev-btn" onclick="navQuestion(-1)" class="flex items-center gap-1 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-700 hover:bg-slate-600 text-slate-200 transition">
-              <i data-lucide="chevron-left" class="w-4 h-4"></i> 前へ
-            </button>
-
-            <button id="random-btn" onclick="randomQuestion()" class="flex items-center gap-1 px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-amber-400 hover:bg-slate-700/50 transition">
-              <i data-lucide="shuffle" class="w-3.5 h-3.5"></i> <span class="hidden xs:inline">ランダム</span>
-            </button>
-
-            <button id="next-btn" onclick="navQuestion(1)" class="flex items-center gap-1 px-4 py-2 sm:px-5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md transition">
-              次へ <i data-lucide="chevron-right" class="w-4 h-4"></i>
-            </button>
-          </div>
-
-        </div>
-      </main>
-
-      <!-- Left Sidebar: Category Filters -> Hidden on Mobile (using horizontal chips above), LEFT on PC (lg:order-1) -->
-      <aside class="hidden lg:block order-2 lg:order-1 lg:col-span-3 space-y-3 sm:space-y-4">
-        <div class="bg-slate-800/90 rounded-2xl p-3 sm:p-4 border border-slate-700/70 card-glow">
-          <div class="flex items-center justify-between mb-2.5 border-b border-slate-700 pb-2">
-            <h2 class="font-bold text-xs sm:text-sm tracking-wide text-slate-200 flex items-center gap-2">
-              <i data-lucide="folder-kanban" class="w-4 h-4 text-amber-400"></i> カテゴリー切り替え
-            </h2>
-            <button onclick="filterCategory('all')" class="text-xs text-amber-400 hover:underline font-semibold">すべて</button>
-          </div>
-
-          <div id="category-list" class="space-y-1.5 text-xs sm:text-sm">
-            <!-- Rendered by JavaScript for Desktop -->
-          </div>
-
-          <div class="mt-3 pt-2.5 border-t border-slate-700/70 text-[10px] sm:text-[11px] text-amber-300/80 bg-amber-950/20 p-2 sm:p-2.5 rounded-lg border border-amber-600/30 flex items-start gap-1.5">
-            <i data-lucide="info" class="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5"></i>
-            <span>バッテリー論・カウント別は<b>チーム内公開のみ</b>。配球情報は対外秘です。</span>
-          </div>
-        </div>
-
-        <!-- Chapter Progress Mini-card -->
-        <div class="bg-slate-800/90 rounded-2xl p-4 border border-slate-700/70 card-glow">
-          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
-            <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-emerald-400"></i> 章ごとの達成度
-          </h3>
-          <div id="chapter-progress-bars" class="space-y-2.5 text-xs">
-            <!-- Dynamic list -->
-          </div>
-        </div>
-      </aside>
-
-      <!-- Right Sidebar: Stats & Rankings -> Placed SECOND on Mobile (order-2), RIGHT on PC (lg:order-3) -->
-      <aside class="order-2 lg:order-3 lg:col-span-3 space-y-3 sm:space-y-4">
-        <!-- Today's Record Card -->
-        <div class="bg-slate-800/90 rounded-2xl p-3 sm:p-4 border border-slate-700/70 card-glow">
-          <h3 class="font-bold text-xs sm:text-sm tracking-wide text-slate-200 mb-2.5 flex items-center justify-between">
-            <span class="flex items-center gap-1.5"><i data-lucide="calendar-check-2" class="w-4 h-4 text-cyan-400"></i> 今日のせいせき</span>
-            <span class="text-[10px] sm:text-[11px] text-slate-400">19問中 16問正解</span>
-          </h3>
-
-          <div class="bg-slate-900/80 rounded-xl p-2.5 sm:p-3 border border-slate-700 flex items-center justify-around text-center mb-2.5">
-            <div>
-              <div class="text-[10px] sm:text-[11px] text-slate-400">本日正答率</div>
-              <div class="text-xl sm:text-2xl font-black text-amber-400 font-mono" id="today-accuracy">84%</div>
-            </div>
-            <div class="w-[1px] h-7 bg-slate-700"></div>
-            <div>
-              <div class="text-[10px] sm:text-[11px] text-slate-400">解いた問題</div>
-              <div class="text-xl sm:text-2xl font-black text-cyan-300 font-mono" id="today-solved-count">19<span class="text-xs font-normal text-slate-400 ml-0.5">問</span></div>
-            </div>
-          </div>
-
-          <p class="text-[10px] sm:text-[11px] text-slate-400 leading-normal">
-            毎日10分でも反復することで、試合中の瞬時の判断（走塁・配球読み）が体に染み込みます。
-          </p>
-        </div>
-
-        <!-- Leaderboard -->
-        <div class="bg-slate-800/90 rounded-2xl p-3 sm:p-4 border border-slate-700/70 card-glow">
-          <div class="flex items-center justify-between mb-2.5 border-b border-slate-700 pb-2">
-            <h3 class="font-bold text-xs sm:text-sm tracking-wide text-slate-200 flex items-center gap-1.5">
-              <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i> チームのランキング
-            </h3>
-            <span class="text-[10px] text-slate-400">クリア数順</span>
-          </div>
-
-          <div class="space-y-1.5 sm:space-y-2 text-xs">
-            <div class="flex items-center justify-between p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
-              <div class="flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black flex items-center justify-center text-[10px]">1</span>
-                <span class="font-bold text-slate-200">こばやし 翔</span>
-                <span class="text-[10px] px-1 bg-amber-400/20 text-amber-300 rounded font-semibold">中3</span>
-              </div>
-              <span class="font-mono font-bold text-amber-300">188 問</span>
-            </div>
-
-            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-700/40 border border-slate-700">
-              <div class="flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-slate-400 text-slate-950 font-bold flex items-center justify-center text-[10px]">2</span>
-                <span class="font-semibold text-slate-200">たなか 悠</span>
-                <span class="text-[10px] px-1 bg-slate-600 text-slate-300 rounded">中2</span>
-              </div>
-              <span class="font-mono font-bold text-slate-300">171 問</span>
-            </div>
-
-            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-700/40 border border-slate-700">
-              <div class="flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-amber-800 text-amber-100 font-bold flex items-center justify-center text-[10px]">3</span>
-                <span class="font-semibold text-slate-200">さとう 蓮</span>
-                <span class="text-[10px] px-1 bg-slate-600 text-slate-300 rounded">中3</span>
-              </div>
-              <span class="font-mono font-bold text-slate-300">165 問</span>
-            </div>
-
-            <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-950/20 border border-emerald-500/40">
-              <div class="flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-[10px]">5</span>
-                <span class="font-bold text-emerald-300">あなた（自分）</span>
-              </div>
-              <span class="font-mono font-bold text-emerald-400" id="user-rank-score">59 問</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Manual Quick Reference Modal Trigger -->
-        <div class="p-3 bg-gradient-to-r from-slate-800 to-indigo-950/40 border border-indigo-500/30 rounded-2xl flex items-center justify-between">
-          <div>
-            <div class="text-xs font-bold text-indigo-300">マニュアル要点集</div>
-            <div class="text-[10px] text-slate-400">監督赤入れ内容の辞書検索</div>
-          </div>
-          <button onclick="openManualModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition shadow">
-            開く
-          </button>
-        </div>
-      </aside>
-
-    </div>
-  </div>
-
-  <!-- Confidential Auth Modal -->
-  <div id="auth-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-slate-900 border border-amber-500/50 rounded-2xl max-w-sm w-full p-5 shadow-2xl">
-      <div class="flex items-center gap-2 mb-3 text-amber-400">
-        <i data-lucide="shield-alert" class="w-6 h-6"></i>
-        <h3 class="font-bold text-base text-white">チーム関係者 認証</h3>
-      </div>
-      <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-        第2章「バッテリー論」および第7章「カウント別配球・打撃」は他校への戦術流出を防ぐため対外非公開です。チームパスコードを入力してください。
-      </p>
-      <div class="mb-4">
-        <input type="password" id="passcode-input" placeholder="パスコード (デモ用: 1234)" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-amber-400">
-        <p id="passcode-error" class="text-xs text-rose-400 mt-1 hidden">パスコードが違います。指導者に確認してください。</p>
-      </div>
-      <div class="flex items-center justify-end gap-2">
-        <button onclick="closeAuthModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:bg-slate-800">キャンセル</button>
-        <button onclick="submitPasscode()" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400">解除する</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Manual Reference Modal -->
-  <div id="manual-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="p-4 border-b border-slate-800 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i data-lucide="book" class="w-5 h-5 text-amber-400"></i>
-          <h3 class="font-bold text-sm sm:text-base text-white">越谷メソッド マニュアル β版（要点辞書）</h3>
-        </div>
-        <button onclick="closeManualModal()" class="text-slate-400 hover:text-white p-1">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-      <div class="p-4 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed">
-        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
-          <h4 class="font-bold text-amber-300 mb-1">【掟1-1】1塁走者のリード幅 ★★★</h4>
-          <p>右投手なら身長+1歩、左投手なら身長+1.5歩。左投手の方が素早い牽制ができないため大きく取れる。相手捕手・投手にプレッシャーを与え、外の真っ直ぐを狙いやすくする。</p>
-        </div>
-        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
-          <h4 class="font-bold text-amber-300 mb-1">【掟1-3】2死2ストライクの走塁 ★★★</h4>
-          <p>打者は「スイングGO」、2塁走者は「ストライクGO」。三振でチェンジになる場面では0.1秒でも速くホームへ向かうため例外なく徹底。</p>
-        </div>
-        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
-          <h4 class="font-bold text-amber-300 mb-1">【打撃3-3】追い込まれた後の意識 ★★★</h4>
-          <p>「意識は逆方向、目付けはインコース」。引っ張り意識のままだと低めの変化球に空振りするため逆方向へ。目付けをインコースにしておかないと内角速球に反応できない。</p>
-        </div>
-        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
-          <h4 class="font-bold text-amber-300 mb-1">【守備5-3】中継プレー（カットマンとトレーラー） ★★★</h4>
-          <p>カットマンは外野からの返球を直接中継。トレーラーはその頭上を越えた送球やショートバウンドをバックアップ。走者がぐるぐる回るのを防ぐ。</p>
-        </div>
-        <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
-          <h4 class="font-bold text-amber-300 mb-1">【走塁4-2】ニュートラルの動き ★★★</h4>
-          <p>1塁走者がレフト前ヒット等で1・2塁間の2/3で一度緩め、ベース付近で再加速。外野手の捕球を確認して進塁かストップかを判断する原則。</p>
-        </div>
-      </div>
-      <div class="p-3 bg-slate-950 border-t border-slate-800 text-right">
-        <button onclick="closeManualModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold">閉じる</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- How to Use & Purpose Guide Modal -->
-  <div id="guide-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6">
-    <div class="bg-slate-900 border border-cyan-500/40 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-      <!-- Modal Header -->
-      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-slate-900 via-cyan-950/40 to-slate-900">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
-            <i data-lucide="compass" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 class="font-bold text-sm sm:text-base text-white">越谷メソッド アプリの使い方と目的</h3>
-            <p class="text-[11px] text-cyan-300/80">グラウンドで迷わず動く「本物の野球脳」をつくる</p>
-          </div>
-        </div>
-        <button onclick="closeGuideModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <!-- Modal Body -->
-      <div class="p-4 sm:p-6 overflow-y-auto space-y-5 text-xs sm:text-sm text-slate-300 leading-relaxed">
-        
-        <!-- 1. Purpose -->
-        <div class="p-4 bg-slate-800/80 rounded-xl border border-slate-700 space-y-2">
-          <div class="flex items-center gap-2 text-amber-300 font-bold text-sm">
-            <i data-lucide="target" class="w-4 h-4"></i>
-            <h4>【目的】なぜこのアプリをやるのか？</h4>
-          </div>
-          <p class="text-slate-300 text-xs sm:text-sm">
-            試合中のボーンヘッドの多くは「知らなかった」か「どう動くか一瞬迷った」ことで起きます。
-            「打った・投げた・走った」の身体感覚だけでなく、**プレーの『理由（なぜそう動くのか）』を頭に叩き込み、グラウンドで0.1秒速く判断できる選手になること**がこのアプリの最大の目的です。
-          </p>
-          <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pt-1 pl-1">
-            <li><b>迷いによるボーンヘッドの根絶</b>：打球が飛んだ瞬間に体が勝手に動く状態を作る。</li>
-            <li><b>チームの共通言語化</b>：選手同士で「今の判断は掟の何番だったか」を同じ基準で反省・会話できる。</li>
-            <li><b>高校・その先でも信頼される選手へ</b>：自立した野球脳を育て、強豪校でも即戦力になる。</li>
-          </ul>
-        </div>
-
-        <!-- 2. Recommended Usage -->
-        <div class="p-4 bg-slate-800/80 rounded-xl border border-slate-700 space-y-2.5">
-          <div class="flex items-center gap-2 text-cyan-300 font-bold text-sm">
-            <i data-lucide="smartphone" class="w-4 h-4"></i>
-            <h4>【使い方】おすすめの3つの習慣</h4>
-          </div>
-          
-          <div class="space-y-2">
-            <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 flex items-start gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-black flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
-              <div>
-                <b class="text-white text-xs block mb-0.5">毎日10分、移動中や寝る前に反復（座学は外で終わらせる）</b>
-                <p class="text-slate-400 text-xs">グラウンドで長い座学をしなくて済むよう、家や電車でスマホで解いて頭に入れておきます。</p>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 flex items-start gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-black flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
-              <div>
-                <b class="text-white text-xs block mb-0.5">練習前に「今日のテーマ」をピンポイント復習</b>
-                <p class="text-slate-400 text-xs">「今日は走塁練習の日」なら、グラウンドに入る前に上のチップから【走塁】を選んで頭を活性化させます。</p>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 flex items-start gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-black flex items-center justify-center text-[10px] shrink-0 mt-0.5">3</span>
-              <div>
-                <b class="text-white text-xs block mb-0.5">間違えたら「解説」と「マニュアル要点集」を必ず読む</b>
-                <p class="text-slate-400 text-xs">ただ正解を覚えるのではなく、「なぜそれが正しいのか」の理由を理解することが本番での応用力になります。</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="p-3 bg-slate-950 border-t border-slate-800 text-right">
-        <button onclick="closeGuideModal()" class="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold transition shadow">理解した！</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Trial Completion Modal (体験7問クリア時の修了画面) -->
-  <div id="trial-complete-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center hidden p-3 sm:p-5">
-    <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-amber-400/50 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative overflow-hidden text-center">
-      
-      <!-- Top Trophy / Badge icon -->
-      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-amber-500/20">
-        <i data-lucide="award" class="w-10 h-10 sm:w-12 sm:h-12"></i>
-      </div>
-
-      <span class="px-3 py-1 rounded-full text-[11px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/40 uppercase tracking-widest">
-        越谷ボーイズ 体験修了証
-      </span>
-
-      <h3 class="text-xl sm:text-2xl font-black text-white mt-2 mb-1">
-        体験7問クリア おめでとう！
-      </h3>
-      
-      <p class="text-xs sm:text-sm text-amber-300/90 font-bold mb-3">
-        「理由」がわかると、野球はもっと面白い。
-      </p>
-
-      <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700/80 text-left text-xs text-slate-200 leading-relaxed mb-4 space-y-1.5">
-        <p>
-          越谷ボーイズでは、ただ「打て」「走れ」と教えるのではなく、**「なぜそう動くのか」を選手自身が理解して動く自立した野球脳**を育てています。
-        </p>
-        <p class="text-slate-400 text-[11px]">
-          この7問は全200問のほんの一部です。グラウンドで瞬時に判断できる武器を、ぜひ一緒に身につけませんか？
-        </p>
-      </div>
-
-      <div class="space-y-2">
-        <a href="https://koshigaya-boys.jp/" target="_blank" rel="noopener noreferrer" class="w-full block py-2.5 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-lg transition">
-          ⚾ 見学・体験練習のご案内（公式HP）
-        </a>
-
-        <button onclick="continueFullQuiz()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm rounded-xl border border-slate-700 transition">
-          全200問の本格学習に挑戦する
-        </button>
-
-        <button onclick="restartTrialQuiz()" class="w-full py-1.5 text-[11px] text-slate-400 hover:text-white transition">
-          もう一度7問を解く
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // 厳選7問のIDリスト（掟・打撃・走塁・守備・投手捕手・用語から各1問、新入団希望者が「なるほど！」と感動するテーマ）
-    const trialQuestionIds = [1, 3, 59, 4, 8, 5, 11];
-    let isTrialMode = false;
-    let trialIndex = 0;
-    let trialCorrectCount = 0;
-
-    // Detailed questions extracted directly from the Koshigaya Method Manual & CSV requirements
-    const quizDatabase = [
+<body>
+<div class="wrap">
+<header class="header">
+ <a class="brand" href="#" onclick="goHome(event)" aria-label="越谷メソッド 先頭へ戻る"><img class="logo" src="https://spc-jp.github.io/koshigaya-method-app/favicon.png" alt="越谷ボーイズ"><div><small>KOSHIGAYA BOYS QUIZ</small><h1>越谷メソッド</h1></div></a>
+ <div class="tools"><button class="btn" onclick="openDialog('guide-dialog')"><i data-lucide="circle-help"></i>使い方</button><button class="btn" id="auth-button" onclick="toggleAuth()"><i data-lucide="lock"></i><span id="auth-label">チーム認証</span></button></div>
+</header>
+<div class="intro"><h2>毎日5問。理由がわかると、強くなる。</h2><p>解く → 理由を知る → もう一度確認する</p></div>
+<section class="actions" aria-label="練習を始める">
+ <button class="action daily" onclick="startSession('daily')"><i data-lucide="sun"></i><span><strong>今日の5問を始める</strong><small>まずは少しずつ、毎日の習慣に</small></span></button>
+ <button class="action" id="review-button" onclick="startSession('review')"><i data-lucide="rotate-ccw"></i><span><strong>間違えた問題を復習</strong><small id="review-caption">復習する問題はありません</small></span></button>
+ <button class="action" onclick="startSession('trial')"><i data-lucide="sprout"></i><span><strong>はじめての体験7問</strong><small>越谷メソッドを知ろう</small></span></button>
+</section>
+<p id="storage-notice" class="notice" role="status" hidden>このブラウザでは記録を保存できません。ページを閉じると今回の記録は消えます。</p>
+<div class="workspace">
+ <main class="learning">
+  <section class="category-panel" aria-label="練習する分野"><h2 class="section-label"><i data-lucide="grid-2x2"></i>練習する分野を選ぶ</h2><div id="categories" class="categories"></div></section>
+  <div id="mode-bar" class="mode-bar" hidden><strong id="mode-title"></strong><button class="btn" onclick="startSession('normal')">通常の問題へ</button></div>
+  <section class="quiz" id="quiz" aria-label="クイズ"><div id="question-view">
+   <div class="qmeta"><span class="tag" id="q-category"></span><span id="q-position"></span></div>
+   <h2 class="question" id="q-text" tabindex="-1"></h2><p class="hint">正しいと思う答えを、1つ選んでください。</p>
+   <div class="choices" id="choices"></div>
+   <section class="feedback" id="feedback" aria-live="polite" hidden></section>
+   <div class="nav"><button class="btn" id="prev-button" onclick="navigate(-1)">前の問題</button><button class="btn primary" id="next-button" onclick="navigate(1)">次の問題</button></div><p class="nav-note" id="nav-note">答えを選ぶと、次へ進めます。</p>
+  </div><div class="empty" id="empty-view" hidden><h2>復習する問題はありません</h2><p>間違えた問題が、ここに自動で集まります。<br>まずは「今日の5問」に取り組んでみましょう。</p><button class="btn primary" onclick="startSession('daily')">今日の5問を始める</button></div></section>
+ </main>
+ <aside class="side">
+  <section class="panel"><h2>今日の記録</h2><dl class="stats"><div class="stat"><dt>解いた問題</dt><dd id="today-solved">0<span>回</span></dd></div><div class="stat"><dt>正解数</dt><dd id="today-correct">0<span>回</span></dd></div></dl><p id="daily-message">まずは1問。自分のペースで取り組もう。</p><p>記録はこの端末・ブラウザに保存されます。解き直しも1回として数えます。</p></section>
+  <section class="panel how"><h2>3つのステップ</h2><ol class="steps"><li><strong>自分で答えを選ぶ</strong><br>間違えても大丈夫。</li><li><strong>理由を読む</strong><br>「なぜ？」を理解しよう。</li><li><strong>もう一度確認する</strong><br>復習して、次のプレーへ。</li></ol></section>
+  <section class="panel"><h2>マニュアル要点集</h2><p>練習前に、プレーのポイントを確認できます。</p><button class="btn full" onclick="openDialog('manual-dialog')"><i data-lucide="book-open"></i>要点集を読む</button></section>
+ </aside>
+</div>
+<footer class="footer">越谷メソッド β版 · 収録12問（チーム認証前は11問）<br>記録は端末ごとに保存され、チーム全体には共有されません。</footer>
+</div>
+<dialog id="guide-dialog" aria-labelledby="guide-title"><div class="dialog-head"><h2 id="guide-title">使い方</h2><button class="btn" onclick="closeDialog('guide-dialog')">閉じる</button></div><div class="dialog-body"><p>プレーの理由を理解して、試合で迷わず判断できる選手を目指しましょう。</p><ol class="steps"><li><strong>「今日の5問」または練習する分野を選ぶ</strong></li><li><strong>答えを選び、解説を読む</strong><br>「正解」「理由」「試合で意識すること」を確認します。</li><li><strong>「間違えた問題を復習」で解き直す</strong><br>正解した問題は復習リストから外れます。</li></ol><p>「はじめての体験7問」では、越谷メソッドの代表的な考え方を学べます。</p><p class="muted">成績と復習リストは、この端末・ブラウザに保存します。ブラウザのデータを削除すると記録も消えます。</p></div></dialog>
+<dialog id="manual-dialog" aria-labelledby="manual-title"><div class="dialog-head"><h2 id="manual-title">マニュアル要点集</h2><button class="btn" onclick="closeDialog('manual-dialog')">閉じる</button></div><div class="dialog-body"><section class="manual-entry"><h3>【掟1-1】1塁走者のリード幅 ★★★</h3><p>右投手なら身長+1歩、左投手なら身長+1.5歩。左投手の方が素早い牽制ができないため大きく取れる。相手捕手・投手にプレッシャーを与え、外の真っ直ぐを狙いやすくする。</p></section><section class="manual-entry"><h3>【掟1-3】2死2ストライクの走塁 ★★★</h3><p>打者は「スイングGO」、2塁走者は「ストライクGO」。三振でチェンジになる場面では0.1秒でも速くホームへ向かうため例外なく徹底。</p></section><section class="manual-entry"><h3>【打撃3-3】追い込まれた後の意識 ★★★</h3><p>「意識は逆方向、目付けはインコース」。引っ張り意識のままだと低めの変化球に空振りするため逆方向へ。目付けをインコースにしておかないと内角速球に反応できない。</p></section><section class="manual-entry"><h3>【守備5-3】中継プレー（カットマンとトレーラー） ★★★</h3><p>カットマンは外野からの返球を直接中継。トレーラーはその頭上を越えた送球やショートバウンドをバックアップ。走者がぐるぐる回るのを防ぐ。</p></section><section class="manual-entry"><h3>【走塁4-2】ニュートラルの動き ★★★</h3><p>1塁走者がレフト前ヒット等で1・2塁間の2/3で一度緩め、ベース付近で再加速。外野手の捕球を確認して進塁かストップかを判断する原則。</p></section></div></dialog>
+<dialog id="auth-dialog" aria-labelledby="auth-title"><div class="dialog-head"><h2 id="auth-title">チーム関係者 認証</h2><button class="btn" onclick="closeDialog('auth-dialog')">閉じる</button></div><form class="dialog-body" onsubmit="submitAuth(event)"><p>バッテリー論の問題を表示します。</p><p class="muted">現在はデモ認証です。パスコードは 1234。本番の機密情報を保護する機能ではありません。</p><label for="passcode">パスコード<input class="field" id="passcode" type="password" autocomplete="off" required></label><p class="error" id="auth-error" role="alert" hidden>パスコードが違います。</p><div class="dialog-actions"><button class="btn primary" type="submit">認証する</button></div></form></dialog>
+<dialog id="complete-dialog" aria-labelledby="complete-title"><div class="dialog-head"><h2 id="complete-title">おつかれさまでした！</h2><button class="btn" onclick="closeDialog('complete-dialog')">閉じる</button></div><div class="dialog-body"><p id="complete-label"></p><p class="summary-score" id="complete-score"></p><p id="complete-message"></p><div class="dialog-actions"><button class="btn primary" id="complete-review" onclick="closeDialog('complete-dialog');startSession('review')">間違えた問題を復習する</button><button class="btn" onclick="closeDialog('complete-dialog');startSession('normal')">好きな分野で続ける</button><a id="trial-link" class="btn soft" href="https://koshigaya-boys.jp/" target="_blank" rel="noopener noreferrer" hidden>見学・体験練習のご案内</a></div></div></dialog>
+<script>
+'use strict';
+const quizDatabase=[
       {
         id: 59,
         category: "打撃",
@@ -779,467 +265,64 @@
         ref: "第8章 用語集 / 第3章 (3-1 打者タイプ)"
       }
     ];
-
-    let currentIndex = 0;
-    let currentFilter = 'all';
-    let userStats = {
-      solvedToday: 19,
-      correctToday: 16,
-      totalSolved: 59,
-      categoryProgress: {
-        "打撃": { solved: 14, total: 26 },
-        "掟の確認": { solved: 15, total: 15 },
-        "走塁": { solved: 9, total: 24 },
-        "守備": { solved: 3, total: 25 },
-        "投手・捕手": { solved: 0, total: 14 },
-        "バッテリー論": { solved: 0, total: 12 },
-        "用語集": { solved: 0, total: 19 }
-      }
-    };
-    let isUnlocked = false;
-    let selectedOption = null;
-    let isAnswered = false;
-
-    // ヘッダーロゴクリック時の「先頭・初期状態へ戻る」処理
-    function returnToTop(e) {
-      if (e) e.preventDefault();
-
-      // 体験モード中なら解除して通常表示へ
-      if (isTrialMode) {
-        exitTrialMode();
-      }
-
-      // カテゴリを「すべて」、インデックスを最初（0）にリセット
-      currentFilter = 'all';
-      currentIndex = 0;
-      renderCategories();
-      renderCurrentQuestion();
-
-      // 最上部へスムーズスクロール
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }
-
-    // Filter questions based on access and trial mode
-    function getFilteredQuestions() {
-      if (isTrialMode) {
-        return trialQuestionIds.map(id => quizDatabase.find(q => q.id === id)).filter(Boolean);
-      }
-      return quizDatabase.filter(q => {
-        if (q.confidential && !isUnlocked) return false;
-        if (currentFilter === 'all') return true;
-        return q.category === currentFilter;
-      });
-    }
-
-    // 体験7問モード開始
-    function startTrialMode() {
-      isTrialMode = true;
-      trialIndex = 0;
-      trialCorrectCount = 0;
-      currentIndex = 0;
-
-      // UI表示の切り替え
-      document.getElementById('trial-banner').classList.add('hidden');
-      document.getElementById('trial-active-bar').classList.remove('hidden');
-      document.getElementById('category-chips-wrapper').classList.add('opacity-40', 'pointer-events-none');
-      const randomBtn = document.getElementById('random-btn');
-      if (randomBtn) randomBtn.classList.add('hidden');
-
-      renderCurrentQuestion();
-
-      // スムーズスクロールで問題へフォーカス
-      const mainEl = document.querySelector('main');
-      if (mainEl) mainEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    // 通常モードへ戻る
-    function exitTrialMode() {
-      isTrialMode = false;
-      document.getElementById('trial-banner').classList.remove('hidden');
-      document.getElementById('trial-active-bar').classList.add('hidden');
-      document.getElementById('category-chips-wrapper').classList.remove('opacity-40', 'pointer-events-none');
-      const randomBtn = document.getElementById('random-btn');
-      if (randomBtn) randomBtn.classList.remove('hidden');
-      
-      currentIndex = 0;
-      renderCategories();
-      renderCurrentQuestion();
-    }
-
-    // 体験終了モーダルからの再スタート
-    function restartTrialQuiz() {
-      document.getElementById('trial-complete-modal').classList.add('hidden');
-      startTrialMode();
-    }
-
-    // 全200問へ進む
-    function continueFullQuiz() {
-      document.getElementById('trial-complete-modal').classList.add('hidden');
-      exitTrialMode();
-    }
-
-    function renderCategories() {
-      const catListEl = document.getElementById('category-list');
-      const mobileChipsEl = document.getElementById('mobile-category-chips');
-      
-      if (catListEl) catListEl.innerHTML = '';
-      if (mobileChipsEl) mobileChipsEl.innerHTML = '';
-
-      const categories = [
-        { name: "all", label: "すべて", isAll: true },
-        { name: "打撃", label: "打撃" },
-        { name: "掟の確認", label: "掟の確認" },
-        { name: "走塁", label: "走塁" },
-        { name: "守備", label: "守備" },
-        { name: "投手・捕手", label: "投手・捕手" },
-        { name: "バッテリー論", label: "バッテリー論 (限定)", lock: !isUnlocked },
-        { name: "用語集", label: "用語集" },
-      ];
-
-      // 1. Render Mobile Horizontal Chips (高さ約36pxで指一本で快適スワイプ)
-      if (mobileChipsEl) {
-        categories.forEach(cat => {
-          const isActive = currentFilter === cat.name;
-          const prog = cat.isAll 
-            ? { solved: userStats.totalSolved, total: 200 }
-            : (userStats.categoryProgress[cat.name] || { solved: 0, total: 20 });
-
-          const chip = document.createElement('button');
-          chip.onclick = () => filterCategory(cat.name);
-          chip.className = `shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm ${
-            isActive
-              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-amber-500/20 ring-2 ring-amber-400/50 scale-[1.02]'
-              : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700 border border-slate-700/80 active:scale-95'
-          }`;
-
-          let lockIcon = cat.lock ? '<i data-lucide="lock" class="w-3 h-3 text-amber-400"></i>' : '';
-          let countBadge = `<span class="text-[10px] font-mono px-1 rounded ${isActive ? 'bg-slate-950/20 text-slate-950 font-black' : 'text-slate-400'}">${prog.solved}/${prog.total}</span>`;
-
-          chip.innerHTML = `${lockIcon}<span>${cat.label}</span>${countBadge}`;
-          mobileChipsEl.appendChild(chip);
-
-          // Scroll active chip into view smoothly on mobile
-          if (isActive) {
-            setTimeout(() => {
-              chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-            }, 50);
-          }
-        });
-      }
-
-      // 2. Render Desktop Sidebar (PC用縦並びリスト)
-      if (catListEl) {
-        categories.filter(c => !c.isAll).forEach(cat => {
-          const prog = userStats.categoryProgress[cat.name] || { solved: 0, total: 20 };
-          const isActive = currentFilter === cat.name;
-          
-          const btn = document.createElement('button');
-          btn.onclick = () => filterCategory(cat.name);
-          btn.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl transition ${
-            isActive 
-              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold' 
-              : 'bg-slate-900/60 hover:bg-slate-700/60 text-slate-300 border border-slate-700/50'
-          }`;
-
-          btn.innerHTML = `
-            <div class="flex items-center gap-2">
-              ${cat.lock ? '<i data-lucide="lock" class="w-3.5 h-3.5 text-amber-400"></i>' : '<i data-lucide="tag" class="w-3.5 h-3.5 text-slate-400"></i>'}
-              <span>${cat.label}</span>
-            </div>
-            <span class="font-mono font-semibold ${prog.solved === prog.total ? 'text-emerald-400' : 'text-slate-400'}">
-              ${prog.solved}/${prog.total}
-            </span>
-          `;
-          catListEl.appendChild(btn);
-        });
-      }
-
-      // Chapter progress mini bars
-      const chapEl = document.getElementById('chapter-progress-bars');
-      if (chapEl) {
-        chapEl.innerHTML = `
-          <div>
-            <div class="flex justify-between text-slate-400 mb-1"><span>掟の実践</span><span class="font-mono font-bold text-emerald-400">100%</span></div>
-            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full w-[100%]"></div></div>
-          </div>
-          <div>
-            <div class="flex justify-between text-slate-400 mb-1"><span>打撃</span><span class="font-mono font-bold text-amber-400">54%</span></div>
-            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden"><div class="bg-amber-500 h-full w-[54%]"></div></div>
-          </div>
-          <div>
-            <div class="flex justify-between text-slate-400 mb-1"><span>走塁</span><span class="font-mono font-bold text-cyan-400">38%</span></div>
-            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden"><div class="bg-cyan-500 h-full w-[38%]"></div></div>
-          </div>
-          <div>
-            <div class="flex justify-between text-slate-400 mb-1"><span>守備</span><span class="font-mono font-bold text-rose-400">12%</span></div>
-            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden"><div class="bg-rose-500 h-full w-[12%]"></div></div>
-          </div>
-        `;
-      }
-
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function filterCategory(catName) {
-      if (catName === 'バッテリー論' && !isUnlocked) {
-        openAuthModal();
-        return;
-      }
-      currentFilter = catName;
-      currentIndex = 0;
-      renderCategories();
-      renderCurrentQuestion();
-    }
-
-    function navQuestion(offset) {
-      const questions = getFilteredQuestions();
-      if (!questions.length) return;
-
-      if (isTrialMode) {
-        const nextIdx = currentIndex + offset;
-        if (nextIdx >= questions.length) {
-          showTrialCompleteModal();
-          return;
-        }
-        if (nextIdx < 0) return;
-        currentIndex = nextIdx;
-      } else {
-        currentIndex = (currentIndex + offset + questions.length) % questions.length;
-      }
-      renderCurrentQuestion();
-    }
-
-    function showTrialCompleteModal() {
-      triggerConfetti();
-      document.getElementById('trial-complete-modal').classList.remove('hidden');
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function randomQuestion() {
-      if (isTrialMode) return;
-      const questions = getFilteredQuestions();
-      if (questions.length <= 1) return;
-      let newIdx;
-      do {
-        newIdx = Math.floor(Math.random() * questions.length);
-      } while (newIdx === currentIndex);
-      currentIndex = newIdx;
-      renderCurrentQuestion();
-    }
-
-    function renderCurrentQuestion() {
-      const questions = getFilteredQuestions();
-      isAnswered = false;
-      selectedOption = null;
-
-      if (!questions.length) {
-        document.getElementById('q-question-text').textContent = "このカテゴリーに問題はありません。";
-        document.getElementById('choices-container').innerHTML = '';
-        return;
-      }
-
-      const q = questions[currentIndex];
-
-      if (isTrialMode) {
-        document.getElementById('trial-step-badge').textContent = `${currentIndex + 1} / ${questions.length} 問`;
-        document.getElementById('q-category-tag').className = "px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-black bg-amber-400 text-slate-950 shadow-sm";
-        document.getElementById('q-category-tag').textContent = `🔰 体験：${q.category}`;
-        document.getElementById('q-index-tag').textContent = `第 ${currentIndex + 1} 問（全7問）`;
-        document.getElementById('next-btn').innerHTML = currentIndex === questions.length - 1 
-          ? `結果を見る <i data-lucide="award" class="w-4 h-4 ml-1"></i>`
-          : `次の問題 <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>`;
-      } else {
-        document.getElementById('q-category-tag').className = "px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30";
-        document.getElementById('q-category-tag').textContent = q.category;
-        document.getElementById('q-index-tag').textContent = `問題 ${q.id} / 200`;
-        document.getElementById('next-btn').innerHTML = `次へ <i data-lucide="chevron-right" class="w-4 h-4"></i>`;
-      }
-      
-      // Star difficulty
-      const diffEl = document.getElementById('q-difficulty');
-      let starsHtml = `<span class="text-xs font-semibold mr-1 text-slate-400">難易度</span>`;
-      for (let i = 0; i < 3; i++) {
-        const fill = i < q.difficulty ? 'fill-amber-400' : 'text-slate-600';
-        starsHtml += `<i data-lucide="star" class="w-3.5 h-3.5 ${fill}"></i>`;
-      }
-      diffEl.innerHTML = starsHtml;
-
-      // Question body
-      document.getElementById('q-question-text').textContent = q.question;
-      const noteEl = document.getElementById('q-note');
-      if (q.note) {
-        noteEl.textContent = q.note;
-        noteEl.classList.remove('hidden');
-      } else {
-        noteEl.classList.add('hidden');
-      }
-
-      // Choices
-      const choicesEl = document.getElementById('choices-container');
-      choicesEl.innerHTML = '';
-
-      q.choices.forEach(c => {
-        const btn = document.createElement('button');
-        btn.id = `choice-${c.key}`;
-        btn.onclick = () => selectChoice(c.key);
-        btn.className = `option-btn w-full text-left p-3 sm:p-3.5 min-h-[52px] rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-700/60 transition flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm text-slate-200`;
-        btn.innerHTML = `
-          <span class="w-6 h-6 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-bold text-amber-400 shrink-0 mt-0.5 text-xs">
-            ${c.key}
-          </span>
-          <span class="leading-relaxed flex-1">${c.text}</span>
-        `;
-        choicesEl.appendChild(btn);
-      });
-
-      // Hide explanation
-      const expBox = document.getElementById('explanation-box');
-      expBox.classList.add('hidden');
-
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function selectChoice(key) {
-      if (isAnswered) return;
-      isAnswered = true;
-      selectedOption = key;
-
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        navigator.vibrate(15);
-      }
-
-      const questions = getFilteredQuestions();
-      const q = questions[currentIndex];
-      const isCorrect = key === q.answer;
-
-      userStats.solvedToday++;
-      if (isCorrect) {
-        userStats.correctToday++;
-        triggerConfetti();
-      }
-
-      const rate = Math.round((userStats.correctToday / userStats.solvedToday) * 100);
-      document.getElementById('today-accuracy').textContent = `${rate}%`;
-      document.getElementById('today-solved-count').innerHTML = `${userStats.solvedToday}<span class="text-xs font-normal text-slate-400 ml-0.5">問</span>`;
-      document.getElementById('stat-accuracy-rate').textContent = `${rate}%`;
-
-      q.choices.forEach(c => {
-        const btn = document.getElementById(`choice-${c.key}`);
-        btn.disabled = true;
-
-        if (c.key === q.answer) {
-          btn.className = "w-full text-left p-3 sm:p-3.5 min-h-[52px] rounded-xl border-2 border-emerald-500 bg-emerald-950/40 text-emerald-200 flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm shadow-md";
-          const badge = btn.querySelector('span');
-          badge.className = "w-6 h-6 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center shrink-0 mt-0.5 text-xs";
-        } else if (c.key === key && !isCorrect) {
-          btn.className = "w-full text-left p-3 sm:p-3.5 min-h-[52px] rounded-xl border-2 border-rose-500 bg-rose-950/40 text-rose-200 flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm";
-          const badge = btn.querySelector('span');
-          badge.className = "w-6 h-6 rounded-lg bg-rose-500 text-slate-950 font-black flex items-center justify-center shrink-0 mt-0.5 text-xs";
-        } else {
-          btn.className = "w-full text-left p-3 sm:p-3.5 min-h-[52px] rounded-xl border border-slate-800 bg-slate-900/40 text-slate-500 opacity-60 flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm";
-        }
-      });
-
-      const expBox = document.getElementById('explanation-box');
-      const headingEl = document.getElementById('feedback-heading');
-      const textEl = document.getElementById('explanation-text');
-      const refEl = document.getElementById('manual-ref');
-
-      expBox.classList.remove('hidden');
-      if (isCorrect) {
-        expBox.className = "rounded-xl p-3.5 sm:p-4 border border-emerald-500/50 bg-emerald-950/30 text-emerald-300 transition-all duration-300 mb-3 sm:mb-5";
-        headingEl.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i> <span class="text-emerald-300">○ 正解！</span>`;
-      } else {
-        expBox.className = "rounded-xl p-3.5 sm:p-4 border border-rose-500/50 bg-rose-950/30 text-rose-300 transition-all duration-300 mb-3 sm:mb-5";
-        headingEl.innerHTML = `<i data-lucide="alert-circle" class="w-5 h-5 text-rose-400"></i> <span class="text-rose-300">× 惜しい！ 正解は【${q.answer}】</span>`;
-      }
-
-      textEl.innerHTML = `
-        <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-700/60 mb-1.5">
-          <span class="text-amber-400 font-bold block text-xs mb-0.5">【結論・掟】</span>
-          <span class="text-slate-200 text-xs sm:text-sm">${q.explanation}</span>
-        </div>
-      `;
-      refEl.innerHTML = `<i data-lucide="book-open" class="w-3.5 h-3.5"></i> <span>根拠：${q.ref}</span>`;
-
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function triggerConfetti() {
-      if (window.confetti) {
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.75 },
-          colors: ['#f59e0b', '#10b981', '#06b6d4']
-        });
-      }
-    }
-
-    function toggleConfidentialAccess() {
-      if (isUnlocked) {
-        isUnlocked = false;
-        document.getElementById('lock-icon').setAttribute('data-lucide', 'lock');
-        document.getElementById('lock-label').textContent = 'チーム限定認証';
-        document.getElementById('auth-lock-btn').className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition border border-slate-600 bg-slate-800 hover:bg-slate-700 text-slate-300";
-        if (currentFilter === 'バッテリー論') currentFilter = 'all';
-        renderCategories();
-        renderCurrentQuestion();
-      } else {
-        openAuthModal();
-      }
-    }
-
-    function openAuthModal() {
-      document.getElementById('auth-modal').classList.remove('hidden');
-      document.getElementById('passcode-input').value = '';
-      document.getElementById('passcode-error').classList.add('hidden');
-      document.getElementById('passcode-input').focus();
-    }
-
-    function closeAuthModal() {
-      document.getElementById('auth-modal').classList.add('hidden');
-    }
-
-    function submitPasscode() {
-      const code = document.getElementById('passcode-input').value;
-      if (code === '1234' || code.toLowerCase() === 'boys' || code === 'koshigaya') {
-        isUnlocked = true;
-        closeAuthModal();
-        document.getElementById('lock-icon').setAttribute('data-lucide', 'unlock');
-        document.getElementById('lock-label').textContent = 'チーム認証済み';
-        document.getElementById('auth-lock-btn').className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition border border-amber-500/60 bg-amber-500/20 text-amber-300";
-        renderCategories();
-        renderCurrentQuestion();
-      } else {
-        document.getElementById('passcode-error').classList.remove('hidden');
-      }
-    }
-
-    // Manual Modal controls
-    function openManualModal() {
-      document.getElementById('manual-modal').classList.remove('hidden');
-    }
-    function closeManualModal() {
-      document.getElementById('manual-modal').classList.add('hidden');
-    }
-
-    // Guide & Purpose Modal controls
-    function openGuideModal() {
-      document.getElementById('guide-modal').classList.remove('hidden');
-    }
-    function closeGuideModal() {
-      document.getElementById('guide-modal').classList.add('hidden');
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      renderCategories();
-      renderCurrentQuestion();
-      if (window.lucide) lucide.createIcons();
-    });
-  </script>
+const practice={
+59:'追い込まれたら「意識は逆方向、目付けはインコース」を確認しよう。',
+1:'相手投手の右・左を確認し、決められた歩数でリードを取ろう。',
+2:'1塁へ投げて終わりにせず、本塁への転送まで準備しよう。',
+3:'2アウト2ストライクになったら、自分のスタートの合図を確認しよう。',
+4:'打球の方向と走者の状況を見て判断しよう。満塁・1、3塁の例外も確認しよう。',
+5:'カットマンを越える送球に備え、トレーラーの位置と役割を確認しよう。',
+6:'打席に入る前に、狙う高さと見送る低めの球を確認しよう。',
+7:'挟殺では手前の塁へ追い込み、次の塁に進ませないようにしよう。',
+8:'ベース付近で捕球の結果を見て、止まるか進むかを判断しよう。',
+9:'ワンバウンドには息を吐き、力を抜いて体で止めよう。',
+10:'満塁・フルカウントでは、押し出しのリスクを確認して配球を判断しよう。',
+11:'自分の役割を確認し、後ろの打者につなぐプレーを考えよう。'
+};
+const categoryList=[['all','すべて','grid-2x2'],['打撃','打撃','target'],['守備','守備','shield'],['走塁','走塁','footprints'],['掟の確認','掟の確認','list-checks'],['投手・捕手','投手・捕手','circle-dot'],['バッテリー論','バッテリー論','lock'],['用語集','用語集','book-open']];
+const trialIds=[1,3,59,4,8,5,11];
+const storageKey='koshigaya-method-learning-v1';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function dayKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
+let record={date:dayKey(),solved:0,correct:0,wrong:[]},storageAvailable=true;
+try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved&&Array.isArray(saved.wrong)){record.wrong=[...new Set(saved.wrong)].filter(id=>quizDatabase.some(q=>q.id===id));if(saved.date===dayKey()){record.solved=Number.isSafeInteger(saved.solved)&&saved.solved>=0?saved.solved:0;record.correct=Number.isSafeInteger(saved.correct)&&saved.correct>=0?Math.min(saved.correct,record.solved):0;}}}catch(e){storageAvailable=false;}
+let unlocked=false,mode='normal',category='all',queue=[],position=0,answers=new Map(),pendingCategory=null,lastFocus=null;
+function icons(){if(window.lucide)window.lucide.createIcons();}
+function allowedQuestions(){return quizDatabase.filter(q=>!q.confidential||unlocked);}
+function reviewQuestions(){return allowedQuestions().filter(q=>record.wrong.includes(q.id));}
+function refreshDate(){if(record.date!==dayKey()){record.date=dayKey();record.solved=0;record.correct=0;}}
+function saveRecord(){try{localStorage.setItem(storageKey,JSON.stringify(record));}catch(e){storageAvailable=false;}$('storage-notice').hidden=storageAvailable;}
+function updateStats(){refreshDate();$('today-solved').innerHTML=`${record.solved}<span>回</span>`;$('today-correct').innerHTML=`${record.correct}<span>回</span>`;const n=reviewQuestions().length;$('review-caption').textContent=n?`${n}問をもう一度確認しよう`:'復習する問題はありません';$('daily-message').textContent=record.solved>=5?'今日も5問以上に取り組めました！':record.solved?`今日の5問まで、あと${5-record.solved}回。`:'まずは1問。自分のペースで取り組もう。';$('storage-notice').hidden=storageAvailable;}
+function renderCategories(){$('categories').innerHTML=categoryList.map(([key,label,icon])=>`<button class="category" onclick="chooseCategory('${key}')" aria-pressed="${mode==='normal'&&category===key}"${key==='バッテリー論'&&!unlocked?' aria-label="バッテリー論 チーム認証が必要"':''}><i data-lucide="${key==='バッテリー論'&&unlocked?'unlock':icon}" aria-hidden="true"></i>${label}</button>`).join('');icons();}
+function chooseCategory(key){if(key==='バッテリー論'&&!unlocked){pendingCategory=key;showAuth();return;}startSession('normal',key);}
+function startSession(nextMode,nextCategory='all',focus=true){mode=nextMode;category=nextCategory;position=0;answers=new Map();const available=allowedQuestions();
+ if(mode==='trial')queue=trialIds.map(id=>available.find(q=>q.id===id)).filter(Boolean);
+ else if(mode==='review')queue=reviewQuestions();
+ else if(mode==='daily'){const seed=[...dayKey()].reduce((a,c)=>a+c.charCodeAt(0),0);const ordered=available.slice(seed%available.length).concat(available.slice(0,seed%available.length));queue=ordered.slice(0,5);}
+ else queue=available.filter(q=>category==='all'||q.category===category);
+ renderCategories();renderQuestion();updateStats();if(focus)focusQuestion();
+}
+function focusQuestion(){$('quiz').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});if(queue.length)$('q-text').focus({preventScroll:true});}
+function renderQuestion(){const special=mode!=='normal';$('mode-bar').hidden=!special;$('mode-title').textContent=({daily:'今日の5問',trial:'はじめての体験7問',review:'間違えた問題を復習'})[mode]||'';$('question-view').hidden=!queue.length;$('empty-view').hidden=!!queue.length;if(!queue.length)return;
+ const q=queue[position],answer=answers.get(q.id);$('q-category').textContent=q.category;$('q-position').textContent=`${position+1} / ${queue.length} 問`;$('q-text').textContent=q.question;
+ $('choices').innerHTML=q.choices.map(c=>{let cls='',label='';if(answer){if(c.key===q.answer){cls='correct';label='正解';}else if(c.key===answer.key){cls='wrong';label='選んだ答え';}else cls='dim';}return `<button class="choice ${cls}" onclick="selectAnswer('${c.key}')" ${answer?'disabled':''}><span class="letter">${c.key}</span><span class="choice-text">${esc(c.text)}${label?`<span class="choice-result">${label}</span>`:''}</span></button>`;}).join('');
+ $('feedback').hidden=!answer;if(answer){const correct=q.choices.find(c=>c.key===q.answer);$('feedback').innerHTML=`<h3 class="${answer.correct?'good':'bad'}">${answer.correct?'○ 正解です！':'もう一度、理由を確認しよう'}</h3><div class="explain-item"><h4>正解はこれ</h4><p><strong>${q.answer}．${esc(correct.text)}</strong></p></div><div class="explain-item"><h4>理由</h4><p>${esc(q.explanation)}</p></div><div class="explain-item practice"><h4>試合で意識すること</h4><p>${esc(practice[q.id])}</p></div><p class="reference">根拠：${esc(q.ref)}</p>`;}
+ $('prev-button').disabled=position===0;$('next-button').disabled=!answer;$('next-button').textContent=position===queue.length-1?'結果を見る':'次の問題';$('nav-note').textContent=answer?'理由を確認したら、次へ進みましょう。':'答えを選ぶと、次へ進めます。';
+}
+function selectAnswer(key){const q=queue[position];if(!q||answers.has(q.id)||!q.choices.some(c=>c.key===key))return;refreshDate();const correct=key===q.answer;answers.set(q.id,{key,correct});record.solved++;if(correct){record.correct++;record.wrong=record.wrong.filter(id=>id!==q.id);}else if(!record.wrong.includes(q.id))record.wrong.push(q.id);saveRecord();renderQuestion();updateStats();}
+function navigate(step){if(step<0){if(position>0){position--;renderQuestion();focusQuestion();}return;}if(!queue[position]||!answers.has(queue[position].id))return;if(position<queue.length-1){position++;renderQuestion();focusQuestion();}else completeSession();}
+function completeSession(){const count=[...answers.values()].filter(a=>a.correct).length;$('complete-label').textContent=({normal:'選んだ分野',daily:'今日の5問',trial:'体験7問',review:'復習'})[mode]+'を終えました。';$('complete-score').innerHTML=`${count}<span> / ${queue.length} 問 正解</span>`;const n=reviewQuestions().length;$('complete-message').textContent=n?`復習する問題は${n}問です。理由を読んで、もう一度取り組んでみましょう。`:'復習リストは空になりました。学んだことを、次の練習でも意識しよう。';$('complete-review').hidden=!n;$('trial-link').hidden=mode!=='trial';openDialog('complete-dialog');if(window.confetti&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches)window.confetti({particleCount:40,spread:55,colors:['#fbbf24','#6ee7b7','#67e8f9']});}
+function openDialog(id){lastFocus=document.activeElement;$(id).showModal();}
+function closeDialog(id){$(id).close();}
+function showAuth(){$('passcode').value='';$('auth-error').hidden=true;openDialog('auth-dialog');$('passcode').focus();}
+function toggleAuth(){if(unlocked){unlocked=false;$('auth-label').textContent='チーム認証';startSession('normal');}else{pendingCategory=null;showAuth();}}
+function submitAuth(event){event.preventDefault();const code=$('passcode').value.trim().toLowerCase();if(!['1234','boys','koshigaya'].includes(code)){$('auth-error').hidden=false;return;}unlocked=true;$('auth-label').textContent='認証済み';closeDialog('auth-dialog');startSession('normal',pendingCategory||'all');pendingCategory=null;}
+function goHome(event){if(event)event.preventDefault();startSession('normal','all',false);window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('dialog').forEach(dialog=>{dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});dialog.addEventListener('close',()=>{if(lastFocus&&lastFocus.isConnected)lastFocus.focus({preventScroll:true});});});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){updateStats();saveRecord();}});
+startSession('normal','all',false);
+window.addEventListener('DOMContentLoaded',icons);
+</script>
 </body>
 </html>
