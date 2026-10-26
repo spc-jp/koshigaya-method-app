@@ -28,6 +28,24 @@
 .method-footer .footer-copyright{font-size:11px;color:#8b9ab0;margin-top:12px}
 .method-footer .footer-note{font-size:11px;color:#a5b3c7;margin:14px auto 0;max-width:530px}
 @media(max-width:540px){.method-footer{text-align:center;padding:24px 10px 18px}.method-footer .footer-title{font-size:20px}.method-footer .footer-credit{font-size:11px}}
+
+/* 中学生にもわかりやすい使い方ガイド */
+#guide-dialog{overflow-y:auto;overscroll-behavior:contain}
+.guide-body{font-size:15px;line-height:1.85}
+.guide-purpose{background:#112c3b;border:1px solid #35808b;border-radius:14px;padding:16px 18px;margin-bottom:22px}
+.guide-purpose h3{margin:0 0 8px;color:#a5f3fc;font-size:17px}
+.guide-purpose p{margin:8px 0}
+.guide-emphasis{color:#fde68a;font-weight:700}
+.guide-heading{font-size:17px;margin:0 0 14px;color:#fbbf24}
+.guide-steps{list-style:none;margin:0;padding:0;display:grid;gap:11px}
+.guide-steps li{padding:13px 15px;border:1px solid #3b4b62;background:#1e293b;border-radius:12px}
+.guide-steps strong{display:block;color:#fff;font-size:15px;margin-bottom:4px}
+.guide-steps span{display:block;color:#d4deea;font-size:14px}
+.guide-tip{margin-top:20px;padding:13px 16px;background:#fbbf2410;border-left:3px solid #fbbf24;border-radius:8px}
+.guide-tip h3{margin:0;color:#fde68a;font-size:16px}
+.guide-tip p{margin:4px 0}
+.guide-storage{font-size:12px!important;color:#bdc9d9;margin-top:18px!important}
+@media(max-width:540px){.guide-purpose{padding:13px}.guide-steps li{padding:12px}.guide-heading{font-size:16px}}
 </style>
 </head>
 <body>
@@ -71,7 +89,18 @@
   <p class="footer-note">学習記録はこの端末・ブラウザに保存され、チーム全体には共有されません。</p>
 </footer>
 </div>
-<dialog id="guide-dialog" aria-labelledby="guide-title"><div class="dialog-head"><h2 id="guide-title">使い方</h2><button class="btn" onclick="closeDialog('guide-dialog')">閉じる</button></div><div class="dialog-body"><p>プレーの理由を理解して、試合で迷わず判断できる選手を目指しましょう。</p><ol class="steps"><li><strong>「今日の5問」または練習する分野を選ぶ</strong></li><li><strong>答えを選び、解説を読む</strong><br>「正解」「理由」「試合で意識すること」を確認します。</li><li><strong>「間違えた問題を復習」で解き直す</strong><br>正解した問題は復習リストから外れます。</li></ol><p>「はじめての体験7問」では、越谷メソッドの代表的な考え方を学べます。</p><p class="muted">成績と復習リストは、この端末・ブラウザに保存します。ブラウザのデータを削除すると記録も消えます。</p></div></dialog>
+<dialog id="guide-dialog" aria-labelledby="guide-title"><div class="dialog-head"><h2 id="guide-title">越谷メソッドの目的と使い方</h2><button class="btn" onclick="closeDialog('guide-dialog')">閉じる</button></div><div class="dialog-body guide-body">
+<section class="guide-purpose" aria-labelledby="guide-purpose-title"><h3 id="guide-purpose-title">⚾ このアプリは、なんのために使うの？</h3><p>野球では、「今、どう動けばいい？」と自分で考える場面がたくさんあります。</p><p>このアプリは、クイズを通して<strong>プレーの理由を学び、試合で自分で考えて動けるようになる</strong>ためのものです。</p><p class="guide-emphasis">大切なのは、正解の数よりも「なぜそうするのか」を理解すること。間違えても大丈夫！</p></section>
+<section aria-labelledby="guide-how-title"><h3 class="guide-heading" id="guide-how-title">使い方｜この順番でやってみよう</h3><ol class="guide-steps">
+<li><strong>① 最初は「はじめての体験7問」をタップ</strong><span>越谷メソッドの基本を、7つのクイズで体験しよう。</span></li>
+<li><strong>② 問題を読んで、答えを1つ選ぼう</strong><span>A〜Dの中から、正しいと思う答えをタップ。自分で考えることが大切だよ。</span></li>
+<li><strong>③ 正解と「理由」を読もう</strong><span>答えると、正解と解説が出るよ。「試合で意識すること」も確認しよう。読んだら「次の問題」をタップ。</span></li>
+<li><strong>④ 毎日は「今日の5問」にチャレンジ</strong><span>1日5問を目標に、少しずつ続けよう。打撃・守備・走塁など、学びたい分野も選べるよ。</span></li>
+<li><strong>⑤ 間違えた問題は、もう一度やってみよう</strong><span>「間違えた問題を復習」をタップ。正解できると復習リストから外れるよ。</span></li>
+</ol></section>
+<section class="guide-tip" aria-labelledby="guide-tip-title"><h3 id="guide-tip-title">🌟 上達するコツ</h3><p>答えを覚えるだけでなく、<strong>「試合ならどうする？」</strong>と考えてみよう。わからない言葉は、コーチや仲間に聞いてもOK！</p></section>
+<p class="guide-storage">【学習の記録について】今日の解答数や復習する問題は、使っているスマホやパソコンのブラウザに保存されます。別の端末には引き継がれず、ブラウザのデータを消すと記録も消えます。</p>
+</div></dialog>
 <dialog id="manual-dialog" aria-labelledby="manual-title"><div class="dialog-head"><h2 id="manual-title">マニュアル要点集</h2><button class="btn" onclick="closeDialog('manual-dialog')">閉じる</button></div><div class="dialog-body"><section class="manual-entry"><h3>【掟1-1】1塁走者のリード幅 ★★★</h3><p>右投手なら身長+1歩、左投手なら身長+1.5歩。左投手の方が素早い牽制ができないため大きく取れる。相手捕手・投手にプレッシャーを与え、外の真っ直ぐを狙いやすくする。</p></section><section class="manual-entry"><h3>【掟1-3】2死2ストライクの走塁 ★★★</h3><p>打者は「スイングGO」、2塁走者は「ストライクGO」。三振でチェンジになる場面では0.1秒でも速くホームへ向かうため例外なく徹底。</p></section><section class="manual-entry"><h3>【打撃3-3】追い込まれた後の意識 ★★★</h3><p>「意識は逆方向、目付けはインコース」。引っ張り意識のままだと低めの変化球に空振りするため逆方向へ。目付けをインコースにしておかないと内角速球に反応できない。</p></section><section class="manual-entry"><h3>【守備5-3】中継プレー（カットマンとトレーラー） ★★★</h3><p>カットマンは外野からの返球を直接中継。トレーラーはその頭上を越えた送球やショートバウンドをバックアップ。走者がぐるぐる回るのを防ぐ。</p></section><section class="manual-entry"><h3>【走塁4-2】ニュートラルの動き ★★★</h3><p>1塁走者がレフト前ヒット等で1・2塁間の2/3で一度緩め、ベース付近で再加速。外野手の捕球を確認して進塁かストップかを判断する原則。</p></section></div></dialog>
 <dialog id="auth-dialog" aria-labelledby="auth-title"><div class="dialog-head"><h2 id="auth-title">チーム関係者 認証</h2><button class="btn" onclick="closeDialog('auth-dialog')">閉じる</button></div><form class="dialog-body" onsubmit="submitAuth(event)"><p>バッテリー論の問題を表示します。</p><p class="muted">現在はデモ認証です。パスコードは 1234。本番の機密情報を保護する機能ではありません。</p><label for="passcode">パスコード<input class="field" id="passcode" type="password" autocomplete="off" required></label><p class="error" id="auth-error" role="alert" hidden>パスコードが違います。</p><div class="dialog-actions"><button class="btn primary" type="submit">認証する</button></div></form></dialog>
 <dialog id="complete-dialog" aria-labelledby="complete-title"><div class="dialog-head"><h2 id="complete-title">おつかれさまでした！</h2><button class="btn" onclick="closeDialog('complete-dialog')">閉じる</button></div><div class="dialog-body"><p id="complete-label"></p><p class="summary-score" id="complete-score"></p><p id="complete-message"></p><div class="dialog-actions"><button class="btn primary" id="complete-review" onclick="closeDialog('complete-dialog');startSession('review')">間違えた問題を復習する</button><button class="btn" onclick="closeDialog('complete-dialog');startSession('normal')">好きな分野で続ける</button><a id="trial-link" class="btn soft" href="https://koshigaya-boys.jp/" target="_blank" rel="noopener noreferrer" hidden>見学・体験練習のご案内</a></div></div></dialog>
