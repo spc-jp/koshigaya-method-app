@@ -200,6 +200,24 @@ dialog::backdrop{background:#012346ad}
 }
 @media(prefers-reduced-motion:reduce){.progress-fill{transition:none}html{scroll-behavior:auto}}
 
+
+/* Smartphone answer flow: remain on selected option, move only on explicit action */
+.answer-status{margin:15px 0 2px;padding:13px 14px;border-radius:12px;font-size:15px;font-weight:700;line-height:1.65}
+.answer-status.good{background:#e8f6ee;border:1px solid #62a883;color:#165b3e}
+.answer-status.bad{background:#fff0e9;border:1px solid #ce9c87;color:#8a2828}
+.mobile-answer-actions[hidden]{display:none!important}
+.mobile-answer-actions{display:none}
+@media(max-width:800px){
+  body.answer-actions-visible{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+  .mobile-answer-actions:not([hidden]){display:flex;position:fixed;z-index:30;left:0;right:0;bottom:0;gap:9px;padding:10px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:#fffdfa;border-top:1px solid #dbcfc7;box-shadow:0 -7px 24px #01234623}
+  .mobile-answer-actions button{min-height:51px;border-radius:12px;padding:9px 10px;font-size:15px;font-weight:800;line-height:1.4}
+  .mobile-explain-btn{flex:0 0 43%;display:flex;align-items:center;justify-content:center;gap:5px;background:#f3e9e2;border:1px solid #b8a9a0;color:#012346}
+  .mobile-explain-btn svg{height:17px;width:17px;flex:none}
+  .mobile-next-btn{flex:1;background:#9b070a;border:1px solid #9b070a;color:#fff}
+  .nav{position:static;margin-bottom:0;padding-bottom:12px;box-shadow:none}
+  .feedback{scroll-margin-top:12px}
+}
+@media(min-width:801px){.mobile-answer-actions{display:none!important}}
 </style>
 </head>
 <body>
@@ -224,6 +242,7 @@ dialog::backdrop{background:#012346ad}
    <div class="qmeta"><span class="tag" id="q-category"></span><span id="q-position"></span></div><div class="progress-area" aria-label="学習の進み具合"><div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div><div class="progress-caption"><span id="progress-label">学習を始めよう</span><strong id="progress-remaining"></strong></div></div>
    <h2 class="question" id="q-text" tabindex="-1"></h2><p class="hint">正しいと思う答えを、1つ選んでください。</p>
    <div class="choices" id="choices"></div>
+   <div id="answer-status" class="answer-status" role="status" aria-live="polite" hidden></div>
    <section class="feedback" id="feedback" aria-live="polite" tabindex="-1" hidden></section>
    <div class="nav"><button class="btn" id="prev-button" onclick="navigate(-1)">前の問題</button><button class="btn primary" id="next-button" onclick="navigate(1)">次の問題</button></div><p class="nav-note" id="nav-note">答えを選ぶと、次へ進めます。</p>
   </div><div class="empty" id="empty-view" hidden><h2>復習する問題はありません</h2><p>間違えた問題が、ここに自動で集まります。<br>まずは「今日の5問」に取り組んでみましょう。</p><button class="btn primary" onclick="startSession('daily')">今日の5問を始める</button></div></section>
@@ -310,13 +329,19 @@ function startSession(nextMode,nextCategory='all',focus=true){mode=nextMode;cate
  renderCategories();renderQuestion();updateStats();if(focus)focusQuestion();
 }
 function focusQuestion(){$('quiz').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});if(queue.length)$('q-text').focus({preventScroll:true});}
-function renderQuestion(){const special=mode!=='normal';$('mode-bar').hidden=!special;$('mode-title').textContent=({daily:'今日の5問',trial:'はじめての体験7問',review:'間違えた問題を復習'})[mode]||'';$('question-view').hidden=!queue.length;$('empty-view').hidden=!!queue.length;if(!queue.length)return;
+function renderQuestion(){const special=mode!=='normal';$('mode-bar').hidden=!special;$('mode-title').textContent=({daily:'今日の5問',trial:'はじめての体験7問',review:'間違えた問題を復習'})[mode]||'';$('question-view').hidden=!queue.length;$('empty-view').hidden=!!queue.length;if(!queue.length){$('mobile-answer-actions').hidden=true;document.body.classList.remove('answer-actions-visible');return;}
  const q=queue[position],answer=answers.get(q.id);$('q-category').textContent=q.category;$('q-position').textContent=`${position+1} / ${queue.length} 問`;$('q-text').textContent=q.question;$('progress-fill').style.width=`${Math.round(((position+(answer?1:0))/queue.length)*100)}%`;$('progress-label').textContent=`${position+1}問目 / 全${queue.length}問`;$('progress-remaining').textContent=answer?(position===queue.length-1?'この問題まで完了！':`残り${queue.length-position-1}問`):`残り${queue.length-position}問`;
  $('choices').innerHTML=q.choices.map(c=>{let cls='',label='';if(answer){if(c.key===q.answer){cls='correct';label='正解';}else if(c.key===answer.key){cls='wrong';label='選んだ答え';}else cls='dim';}return `<button class="choice ${cls}" onclick="selectAnswer('${c.key}')" ${answer?'disabled':''}><span class="letter">${c.key}</span><span class="choice-text">${esc(c.text)}${label?`<span class="choice-result">${label}</span>`:''}</span></button>`;}).join('');
  $('feedback').hidden=!answer;if(answer){const correct=q.choices.find(c=>c.key===q.answer);$('feedback').innerHTML=`<h3 class="${answer.correct?'good':'bad'}">${answer.correct?'○ 正解です！':'もう一度、理由を確認しよう'}</h3><div class="explain-item"><h4>正解はこれ</h4><p><strong>${q.answer}．${esc(correct.text)}</strong></p></div><div class="explain-item"><h4>理由</h4><p>${esc(q.explanation)}</p></div>${q.commonMistake?`<div class="explain-item practice"><h4>よくある間違い</h4><p>${esc(q.commonMistake)}</p></div>`:""}${q.altAnswer?`<div class="explain-item"><h4>別解・補足</h4><p>${esc(q.altAnswer)}</p></div>`:""}<p class="reference">出典：${esc(q.ref||"記載なし")}　／　確認状況：${esc(q.status)}</p>`;}
  $('prev-button').disabled=position===0;$('next-button').disabled=!answer;$('next-button').textContent=position===queue.length-1?'結果を見る':'次の問題';$('nav-note').textContent=answer?'理由を確認したら、次へ進みましょう。':'答えを選ぶと、次へ進めます。';
+ const status=$('answer-status');status.hidden=!answer;status.className='answer-status'+(answer?(answer.correct?' good':' bad'):'');
+ if(answer){status.textContent=answer.correct?'○ 正解！ 自分の答えを確認して、理由を読もう。':'△ おしい！ 正しい答えを確認して、理由を読もう。';}
+ const mobileBar=$('mobile-answer-actions');mobileBar.hidden=!answer;document.body.classList.toggle('answer-actions-visible',!!answer);
+ $('mobile-next-button').textContent=position===queue.length-1?'結果を見る →':'次の問題へ →';
+
 }
-function selectAnswer(key){const q=queue[position];if(!q||answers.has(q.id)||!q.choices.some(c=>c.key===key))return;refreshDate();const correct=key===q.answer;answers.set(q.id,{key,correct});record.solved++;if(correct){record.correct++;record.wrong=record.wrong.filter(id=>id!==q.id);}else if(!record.wrong.includes(q.id))record.wrong.push(q.id);saveRecord();renderQuestion();updateStats();if(window.matchMedia('(max-width: 800px)').matches){requestAnimationFrame(()=>{$('feedback').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});}}
+function selectAnswer(key){const q=queue[position];if(!q||answers.has(q.id)||!q.choices.some(c=>c.key===key))return;refreshDate();const correct=key===q.answer;answers.set(q.id,{key,correct});record.solved++;if(correct){record.correct++;record.wrong=record.wrong.filter(id=>id!==q.id);}else if(!record.wrong.includes(q.id))record.wrong.push(q.id);saveRecord();renderQuestion();updateStats();}
+function showExplanation(){if($('feedback').hidden)return;$('feedback').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
 function navigate(step){if(step<0){if(position>0){position--;renderQuestion();focusQuestion();}return;}if(!queue[position]||!answers.has(queue[position].id))return;if(position<queue.length-1){position++;renderQuestion();focusQuestion();}else completeSession();}
 function completeSession(){const count=[...answers.values()].filter(a=>a.correct).length;$('complete-label').textContent=({normal:'選んだ分野',daily:'今日の5問',trial:'体験7問',review:'復習'})[mode]+'を終えました。';$('complete-score').innerHTML=`${count}<span> / ${queue.length} 問 正解</span>`;const n=reviewQuestions().length;$('complete-message').textContent=n?`復習する問題は${n}問です。理由を読んで、もう一度取り組んでみましょう。`:'復習リストは空になりました。学んだことを、次の練習でも意識しよう。';$('complete-review').hidden=!n;$('trial-link').hidden=mode!=='trial';openDialog('complete-dialog');if(window.confetti&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches)window.confetti({particleCount:40,spread:55,colors:['#9B070A','#F3E9E2','#012346']});}
 function openDialog(id){lastFocus=document.activeElement;$(id).showModal();}
@@ -330,5 +355,9 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){updateSta
 startSession('normal','all',false);
 window.addEventListener('DOMContentLoaded',icons);
 </script>
+<div id="mobile-answer-actions" class="mobile-answer-actions" hidden aria-label="回答後の操作">
+  <button type="button" class="mobile-explain-btn" onclick="showExplanation()"><i data-lucide="book-open" aria-hidden="true"></i> 理由を見る</button>
+  <button type="button" class="mobile-next-btn" onclick="navigate(1)" id="mobile-next-button">次の問題へ →</button>
+</div>
 </body>
 </html>
