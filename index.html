@@ -218,6 +218,29 @@ dialog::backdrop{background:#012346ad}
   .feedback{scroll-margin-top:12px}
 }
 @media(min-width:801px){.mobile-answer-actions{display:none!important}}
+
+/* Sponsor recruitment refinement only. All selectors stay within the sponsor block. */
+#spc-official-partner{overflow-wrap:anywhere}
+#spc-official-partner .sponsor-recruitment{background:#fffdf9;border-color:#edc79c;padding:18px 16px;margin-bottom:24px}
+#spc-official-partner .sponsor-recruitment-top{margin-bottom:10px}
+#spc-official-partner .sponsor-recruitment-badge{background:#f9e9d3;color:#87500c;border:1px solid #edc79c}
+#spc-official-partner .sponsor-recruitment h2{font-size:18px;line-height:1.65;color:#012346;margin:0 0 11px;letter-spacing:.01em}
+#spc-official-partner .sponsor-recruitment-copy p,#spc-official-partner .sponsor-recruitment-company p{font-size:13px;line-height:1.8;color:#514940;margin:0 0 8px}
+#spc-official-partner .sponsor-recruitment-copy p:last-child,#spc-official-partner .sponsor-recruitment-company p:last-child{margin-bottom:0}
+#spc-official-partner .sponsor-recruitment-message{padding-top:2px;color:#6e3d17!important}
+#spc-official-partner .sponsor-recruitment-benefits{background:#fff;border:1px solid #f1dfc7;border-radius:12px;padding:12px 13px;margin:14px 0}
+#spc-official-partner .sponsor-recruitment-benefits h3{margin:0 0 8px;color:#012346;font-size:14px;line-height:1.5}
+#spc-official-partner .sponsor-recruitment-benefits ul{list-style:none;padding:0;margin:0;display:grid;gap:7px}
+#spc-official-partner .sponsor-recruitment-benefits li{display:flex;align-items:flex-start;gap:9px;font-size:13px;line-height:1.55;color:#382f2a;min-width:0}
+#spc-official-partner .sponsor-recruitment-benefits li span:first-child{flex:0 0 21px;text-align:center;color:#aa6b1f;font-size:16px;line-height:1.3}
+#spc-official-partner .sponsor-recruitment-company{border-top:1px solid #ebdfd0;padding-top:12px}
+#spc-official-partner .sponsor-recruitment-company strong{color:#423328;font-weight:700}
+#spc-official-partner .sponsor-recruitment-bottom{display:block;border-top:0;margin-top:12px;padding-top:0}
+#spc-official-partner .sponsor-recruitment-cta{display:flex;width:100%;min-height:48px;background:#ad6113;color:#fff!important;box-shadow:none;text-align:center;gap:8px;line-height:1.5;white-space:normal}
+#spc-official-partner .sponsor-recruitment-cta:hover{background:#92500e}
+#spc-official-partner .spc-partner-badge{margin-top:1px}
+@media(max-width:540px){#spc-official-partner .sponsor-recruitment{padding:14px 12px;margin-bottom:22px}#spc-official-partner .sponsor-recruitment h2{font-size:16px}#spc-official-partner .sponsor-recruitment-benefits{padding:11px 10px}#spc-official-partner .sponsor-recruitment-cta{font-size:13px}}
+@media(max-width:390px){#spc-official-partner .sponsor-recruitment{padding:13px 10px}#spc-official-partner .sponsor-recruitment-copy p,#spc-official-partner .sponsor-recruitment-company p{font-size:13px}}
 </style>
 </head>
 <body>
@@ -262,18 +285,33 @@ dialog::backdrop{background:#012346ad}
 
 <section class="spc-partner" id="spc-official-partner" aria-labelledby="spc-partner-heading">
   <section class="sponsor-recruitment" id="sponsor-recruitment" aria-labelledby="sponsor-recruitment-title">
-    <div class="sponsor-recruitment-top"><span class="sponsor-recruitment-badge">オフィシャルスポンサー募集中</span><span class="sponsor-recruitment-history">創部30期・3,600名の絆</span></div>
-    <h2 id="sponsor-recruitment-title">子どもたちの夢と挑戦を支えるパートナー企業様を募集しています</h2>
-    <p class="sponsor-recruitment-description">越谷ボーイズ／越谷中央ボーイズでは、青少年の健全育成を共に歩んでくださる地域企業様・個人サポーター様を広く募っております。本アプリへのバナー掲載やHPリンク等、地域ファミリー層へ好感度高く貴社をお届けします。</p>
+    <div class="sponsor-recruitment-top"><span class="sponsor-recruitment-badge">オフィシャルスポンサー募集中</span></div>
+    <h2 id="sponsor-recruitment-title">子どもたちの「野球が好き」を、地域の力で支えませんか。</h2>
+    <div class="sponsor-recruitment-copy">
+      <p>越谷ボーイズでは、野球に励む子どもたちの成長を応援するため、広報活動や学び、心のケアを支えるアプリを制作しています。</p>
+      <p>子どもたちが安心して野球と向き合い、成長していける環境づくりを、地域の皆様と一緒に進めていきたいと考えています。</p>
+      <p class="sponsor-recruitment-message"><strong>皆様の応援が、子どもたちの次の一歩につながります。</strong></p>
+    </div>
+    <div class="sponsor-recruitment-benefits" aria-labelledby="sponsor-benefits-title">
+      <h3 id="sponsor-benefits-title">皆様の協賛でできること</h3>
+      <ul>
+        <li><span aria-hidden="true">♡</span><span>選手の心のケアと成長を支える</span></li>
+        <li><span aria-hidden="true">⚾</span><span>野球を通じた学びと挑戦を応援する</span></li>
+        <li><span aria-hidden="true">🌱</span><span>アプリの継続運用と改善を支える</span></li>
+      </ul>
+    </div>
+    <div class="sponsor-recruitment-company">
+      <p><strong>ご協賛いただいた企業様は、アプリ内で企業ロゴ・ホームページ・応援メッセージとともにご紹介いたします。</strong></p>
+      <p>地域の子どもたちの健全育成を応援するパートナーとしてご参加いただけます。</p>
+    </div>
     <div class="sponsor-recruitment-bottom">
-      <div class="sponsor-recruitment-slot"><span class="sponsor-recruitment-slot-icon" aria-hidden="true">＋枠</span><span><strong>貴社ロゴ掲載枠 受付中</strong><small>保護者・OBが毎週使うアプリ内に掲載</small></span></div>
-      <a class="sponsor-recruitment-cta" href="https://www.koshigayaboys.com/about/" target="_blank" rel="noopener noreferrer">協賛・理念の詳細を見る ↗</a>
+      <a class="sponsor-recruitment-cta" href="https://www.koshigayaboys.com/about/" target="_blank" rel="noopener noreferrer">子どもたちの未来を応援する <span aria-hidden="true">↗</span></a>
     </div>
   </section>
   <h2 class="spc-partner-badge" id="spc-partner-heading">🤝 OFFICIAL PARTNER</h2>
-  <p class="spc-example-note">💡 【掲載実例】ご協賛企業様はこのようにアプリ最下部に掲載されます</p>
+  <p class="spc-example-note">💡 以下は現在掲載中の協賛企業様です</p>
   <p class="spc-partner-intro"><strong>本アプリおよび越谷ボーイズ・越谷中央ボーイズの挑戦は、<br>青少年の夢を育む地域サポーター企業様のご協力により運営されています。</strong></p>
-  <div class="spc-example-heading"><p>📱 掲載イメージ例（タップで公式サイトへジャンプ）</p><span class="spc-example-slot">オフィシャル協賛枠</span></div>
+  <div class="spc-example-heading"><p>掲載中の協賛企業（タップで公式サイトへ）</p><span class="spc-example-slot">オフィシャル協賛枠</span></div>
   <a class="spc-partner-link" href="https://www.smileplusctg.com/" target="_blank" rel="noopener noreferrer" aria-label="スマイルプラスコンサルティング公式サイトを開く">
     <span class="spc-partner-logo"><img src="https://spc-jp.github.io/koshigaya-method-app/spc-logo.png" alt="SPC ロゴ" loading="lazy"></span>
     <span class="spc-partner-copy"><span class="spc-partner-meta"><span class="spc-partner-label">オフィシャル協賛</span><span class="spc-partner-site">公式サイト ↗</span></span>
