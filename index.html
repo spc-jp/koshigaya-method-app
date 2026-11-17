@@ -247,7 +247,7 @@ dialog::backdrop{background:#012346ad}
 <div class="wrap">
 <header class="header">
  <a class="brand" href="#" onclick="goHome(event)" aria-label="越谷メソッド 先頭へ戻る"><img class="logo" src="https://spc-jp.github.io/koshigaya-method-app/favicon.png" alt="越谷ボーイズ"><div><small>KOSHIGAYA BOYS QUIZ</small><h1>越谷メソッド</h1></div></a>
- <div class="tools"><button class="btn" onclick="openDialog('guide-dialog')"><i data-lucide="circle-help"></i>使い方</button><button class="btn" id="auth-button" onclick="toggleAuth()"><i data-lucide="lock"></i><span id="auth-label">チーム認証</span></button></div>
+ <div class="tools"><button class="btn" onclick="openDialog('guide-dialog')"><i data-lucide="circle-help"></i>使い方</button></div>
 </header>
 <div class="intro"><h2>毎日5問。理由がわかると、強くなる。</h2><p>解く → 理由を知る → もう一度確認する</p></div>
 <section class="actions" aria-label="練習を始める">
@@ -255,7 +255,7 @@ dialog::backdrop{background:#012346ad}
  <button class="action" onclick="startSession('daily')"><i data-lucide="sun"></i><span><strong>今日の5問を始める</strong><small>毎日5問で少しずつ成長しよう</small></span></button>
  <button class="action" id="review-button" onclick="startSession('review')"><i data-lucide="rotate-ccw"></i><span><strong>間違えた問題を復習</strong><small id="review-caption">復習する問題はありません</small></span></button>
 </section>
-<p class="notice" role="note"><strong>公開前確認版：</strong>監督確認待ち・未確認の問題と公開範囲が未確定の問題を含みます。HTML内に問題データが収録されるため、チームの承認前にWebへアップロードしないでください。画面上の認証はデモであり、情報保護には使えません。</p>
+
 <p id="storage-notice" class="notice" role="status" hidden>このブラウザでは記録を保存できません。ページを閉じると今回の記録は消えます。</p>
 <div class="workspace">
  <main class="learning">
@@ -320,7 +320,7 @@ dialog::backdrop{background:#012346ad}
   <ul class="spc-example-features" aria-label="協賛枠の掲載内容"><li>✓ 貴社ロゴ</li><li>✓ 応援メッセージ</li><li>✓ 自社HP・SNSリンク</li></ul>
 </section>
   <div class="footer-copyright">© KOSHIGAYA BOYS</div>
-  <p class="footer-note">収録200問（公開区分：要検討137問・チーム内のみ63問）。公開前確認版／学習記録は端末内に保存されます。</p>
+  <p class="footer-note">監督確認済み・収録200問／チーム関係者向け／学習記録は端末内に保存されます。</p>
 </footer>
 </div>
 <dialog id="guide-dialog" aria-labelledby="guide-title"><div class="dialog-head"><h2 id="guide-title">越谷メソッドの目的と使い方</h2><button class="btn" onclick="closeDialog('guide-dialog')">閉じる</button></div><div class="dialog-body guide-body">
@@ -336,7 +336,7 @@ dialog::backdrop{background:#012346ad}
 <p class="guide-storage">【学習の記録について】今日の解答数や復習する問題は、使っているスマホやパソコンのブラウザに保存されます。別の端末には引き継がれず、ブラウザのデータを消すと記録も消えます。</p>
 </div></dialog>
 <dialog id="manual-dialog" aria-labelledby="manual-title"><div class="dialog-head"><h2 id="manual-title">マニュアル要点集</h2><button class="btn" onclick="closeDialog('manual-dialog')">閉じる</button></div><div class="dialog-body"><section class="manual-entry"><h3>【掟1-1】1塁走者のリード幅 ★★★</h3><p>右投手なら身長+1歩、左投手なら身長+1.5歩。左投手の方が素早い牽制ができないため大きく取れる。相手捕手・投手にプレッシャーを与え、外の真っ直ぐを狙いやすくする。</p></section><section class="manual-entry"><h3>【掟1-3】2死2ストライクの走塁 ★★★</h3><p>打者は「スイングGO」、2塁走者は「ストライクGO」。三振でチェンジになる場面では0.1秒でも速くホームへ向かうため例外なく徹底。</p></section><section class="manual-entry"><h3>【打撃3-3】追い込まれた後の意識 ★★★</h3><p>「意識は逆方向、目付けはインコース」。引っ張り意識のままだと低めの変化球に空振りするため逆方向へ。目付けをインコースにしておかないと内角速球に反応できない。</p></section><section class="manual-entry"><h3>【守備5-3】中継プレー（カットマンとトレーラー） ★★★</h3><p>カットマンは外野からの返球を直接中継。トレーラーはその頭上を越えた送球やショートバウンドをバックアップ。走者がぐるぐる回るのを防ぐ。</p></section><section class="manual-entry"><h3>【走塁4-2】ニュートラルの動き ★★★</h3><p>1塁走者がレフト前ヒット等で1・2塁間の2/3で一度緩め、ベース付近で再加速。外野手の捕球を確認して進塁かストップかを判断する原則。</p></section></div></dialog>
-<dialog id="auth-dialog" aria-labelledby="auth-title"><div class="dialog-head"><h2 id="auth-title">チーム関係者 認証</h2><button class="btn" onclick="closeDialog('auth-dialog')">閉じる</button></div><form class="dialog-body" onsubmit="submitAuth(event)"><p>Excelで「非公開（チーム内のみ）」と指定された問題を確認するためのデモ認証です。</p><p class="muted">確認用のデモ認証です。パスコードは 1234。HTMLの中に問題データが入っているため、本番の機密情報を保護できません。一般公開しないでください。</p><label for="passcode">パスコード<input class="field" id="passcode" type="password" autocomplete="off" required></label><p class="error" id="auth-error" role="alert" hidden>パスコードが違います。</p><div class="dialog-actions"><button class="btn primary" type="submit">認証する</button></div></form></dialog>
+
 <dialog id="complete-dialog" aria-labelledby="complete-title"><div class="dialog-head"><h2 id="complete-title">おつかれさまでした！</h2><button class="btn" onclick="closeDialog('complete-dialog')">閉じる</button></div><div class="dialog-body"><p id="complete-label"></p><p class="summary-score" id="complete-score"></p><p id="complete-message"></p><div class="dialog-actions"><button class="btn primary" id="complete-review" onclick="closeDialog('complete-dialog');startSession('review')">間違えた問題を復習する</button><button class="btn" onclick="closeDialog('complete-dialog');startSession('normal')">好きな分野で続ける</button><a id="trial-link" class="btn soft" href="https://koshigaya-boys.jp/" target="_blank" rel="noopener noreferrer" hidden>見学・体験練習のご案内</a></div></div></dialog>
 <script>
 'use strict';
@@ -350,14 +350,14 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 function dayKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
 let record={date:dayKey(),solved:0,correct:0,wrong:[]},storageAvailable=true;
 try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved&&Array.isArray(saved.wrong)){record.wrong=[...new Set(saved.wrong)].filter(id=>quizDatabase.some(q=>q.id===id));if(saved.date===dayKey()){record.solved=Number.isSafeInteger(saved.solved)&&saved.solved>=0?saved.solved:0;record.correct=Number.isSafeInteger(saved.correct)&&saved.correct>=0?Math.min(saved.correct,record.solved):0;}}}catch(e){storageAvailable=false;}
-let unlocked=false,mode='normal',category='all',queue=[],position=0,answers=new Map(),pendingCategory=null,lastFocus=null;
+let mode='normal',category='all',queue=[],position=0,answers=new Map(),lastFocus=null;
 function icons(){if(window.lucide)window.lucide.createIcons();}
-function allowedQuestions(){return quizDatabase.filter(q=>!q.confidential||unlocked);}
+function allowedQuestions(){return quizDatabase;}
 function reviewQuestions(){return allowedQuestions().filter(q=>record.wrong.includes(q.id));}
 function refreshDate(){if(record.date!==dayKey()){record.date=dayKey();record.solved=0;record.correct=0;}}
 function saveRecord(){try{localStorage.setItem(storageKey,JSON.stringify(record));}catch(e){storageAvailable=false;}$('storage-notice').hidden=storageAvailable;}
 function updateStats(){refreshDate();$('today-solved').innerHTML=`${record.solved}<span>回</span>`;$('today-correct').innerHTML=`${record.correct}<span>回</span>`;const n=reviewQuestions().length;$('review-caption').textContent=n?`${n}問をもう一度確認しよう`:'復習する問題はありません';$('daily-message').textContent=record.solved>=5?'今日も5問以上に取り組めました！':record.solved?`今日の5問まで、あと${5-record.solved}回。`:'まずは1問。自分のペースで取り組もう。';$('storage-notice').hidden=storageAvailable;}
-function renderCategories(){$('categories').innerHTML=categoryList.map(([key,label,icon])=>`<button class="category" onclick="chooseCategory('${key}')" aria-pressed="${mode==='normal'&&category===key}"${key==='バッテリー論'&&!unlocked?' aria-label="バッテリー論 チーム認証が必要"':''}><i data-lucide="${key==='バッテリー論'&&unlocked?'unlock':icon}" aria-hidden="true"></i>${label}</button>`).join('');icons();}
+function renderCategories(){$('categories').innerHTML=categoryList.map(([key,label,icon])=>`<button class="category" onclick="chooseCategory('${key}')" aria-pressed="${mode==='normal'&&category===key}"><i data-lucide="${icon}" aria-hidden="true"></i>${label}</button>`).join('');icons();}
 function chooseCategory(key){startSession('normal',key);}
 function startSession(nextMode,nextCategory='all',focus=true){mode=nextMode;category=nextCategory;position=0;answers=new Map();const available=allowedQuestions();
  if(mode==='trial')queue=trialIds.map(id=>available.find(q=>q.id===id)).filter(Boolean);
@@ -370,7 +370,7 @@ function focusQuestion(){$('quiz').scrollIntoView({behavior:window.matchMedia('(
 function renderQuestion(){const special=mode!=='normal';$('mode-bar').hidden=!special;$('mode-title').textContent=({daily:'今日の5問',trial:'はじめての体験7問',review:'間違えた問題を復習'})[mode]||'';$('question-view').hidden=!queue.length;$('empty-view').hidden=!!queue.length;if(!queue.length){$('mobile-answer-actions').hidden=true;document.body.classList.remove('answer-actions-visible');return;}
  const q=queue[position],answer=answers.get(q.id);$('q-category').textContent=q.category;$('q-position').textContent=`${position+1} / ${queue.length} 問`;$('q-text').textContent=q.question;$('progress-fill').style.width=`${Math.round(((position+(answer?1:0))/queue.length)*100)}%`;$('progress-label').textContent=`${position+1}問目 / 全${queue.length}問`;$('progress-remaining').textContent=answer?(position===queue.length-1?'この問題まで完了！':`残り${queue.length-position-1}問`):`残り${queue.length-position}問`;
  $('choices').innerHTML=q.choices.map(c=>{let cls='',label='';if(answer){if(c.key===q.answer){cls='correct';label='正解';}else if(c.key===answer.key){cls='wrong';label='選んだ答え';}else cls='dim';}return `<button class="choice ${cls}" onclick="selectAnswer('${c.key}')" ${answer?'disabled':''}><span class="letter">${c.key}</span><span class="choice-text">${esc(c.text)}${label?`<span class="choice-result">${label}</span>`:''}</span></button>`;}).join('');
- $('feedback').hidden=!answer;if(answer){const correct=q.choices.find(c=>c.key===q.answer);$('feedback').innerHTML=`<h3 class="${answer.correct?'good':'bad'}">${answer.correct?'○ 正解です！':'もう一度、理由を確認しよう'}</h3><div class="explain-item"><h4>正解はこれ</h4><p><strong>${q.answer}．${esc(correct.text)}</strong></p></div><div class="explain-item"><h4>理由</h4><p>${esc(q.explanation)}</p></div>${q.commonMistake?`<div class="explain-item practice"><h4>よくある間違い</h4><p>${esc(q.commonMistake)}</p></div>`:""}${q.altAnswer?`<div class="explain-item"><h4>別解・補足</h4><p>${esc(q.altAnswer)}</p></div>`:""}<p class="reference">出典：${esc(q.ref||"記載なし")}　／　確認状況：${esc(q.status)}</p>`;}
+ $('feedback').hidden=!answer;if(answer){const correct=q.choices.find(c=>c.key===q.answer);$('feedback').innerHTML=`<h3 class="${answer.correct?'good':'bad'}">${answer.correct?'○ 正解です！':'もう一度、理由を確認しよう'}</h3><div class="explain-item"><h4>正解はこれ</h4><p><strong>${q.answer}．${esc(correct.text)}</strong></p></div><div class="explain-item"><h4>理由</h4><p>${esc(q.explanation)}</p></div>${q.commonMistake?`<div class="explain-item practice"><h4>よくある間違い</h4><p>${esc(q.commonMistake)}</p></div>`:""}${q.altAnswer?`<div class="explain-item"><h4>別解・補足</h4><p>${esc(q.altAnswer)}</p></div>`:""}<p class="reference">出典：${esc(q.ref||"記載なし")}</p>`;}
  $('prev-button').disabled=position===0;$('next-button').disabled=!answer;$('next-button').textContent=position===queue.length-1?'結果を見る':'次の問題';$('nav-note').textContent=answer?'理由を確認したら、次へ進みましょう。':'答えを選ぶと、次へ進めます。';
  const status=$('answer-status');status.hidden=!answer;status.className='answer-status'+(answer?(answer.correct?' good':' bad'):'');
  if(answer){status.textContent=answer.correct?'○ 正解！ 自分の答えを確認して、理由を読もう。':'△ おしい！ 正しい答えを確認して、理由を読もう。';}
@@ -384,14 +384,10 @@ function navigate(step){if(step<0){if(position>0){position--;renderQuestion();fo
 function completeSession(){const count=[...answers.values()].filter(a=>a.correct).length;$('complete-label').textContent=({normal:'選んだ分野',daily:'今日の5問',trial:'体験7問',review:'復習'})[mode]+'を終えました。';$('complete-score').innerHTML=`${count}<span> / ${queue.length} 問 正解</span>`;const n=reviewQuestions().length;$('complete-message').textContent=n?`復習する問題は${n}問です。理由を読んで、もう一度取り組んでみましょう。`:'復習リストは空になりました。学んだことを、次の練習でも意識しよう。';$('complete-review').hidden=!n;$('trial-link').hidden=mode!=='trial';openDialog('complete-dialog');if(window.confetti&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches)window.confetti({particleCount:40,spread:55,colors:['#9B070A','#F3E9E2','#012346']});}
 function openDialog(id){lastFocus=document.activeElement;$(id).showModal();}
 function closeDialog(id){$(id).close();}
-function showAuth(){$('passcode').value='';$('auth-error').hidden=true;openDialog('auth-dialog');$('passcode').focus();}
-function toggleAuth(){if(unlocked){unlocked=false;$('auth-label').textContent='チーム認証';startSession('normal');}else{pendingCategory=null;showAuth();}}
-function submitAuth(event){event.preventDefault();const code=$('passcode').value.trim().toLowerCase();if(!['1234','boys','koshigaya'].includes(code)){$('auth-error').hidden=false;return;}unlocked=true;$('auth-label').textContent='認証済み';closeDialog('auth-dialog');startSession('normal',pendingCategory||'all');pendingCategory=null;}
 function goHome(event){if(event)event.preventDefault();startSession('normal','all',false);window.scrollTo({top:0,behavior:'smooth'});}
 document.querySelectorAll('dialog').forEach(dialog=>{dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});dialog.addEventListener('close',()=>{if(lastFocus&&lastFocus.isConnected)lastFocus.focus({preventScroll:true});});});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){updateStats();saveRecord();}});
-startSession('normal','all',false);
-window.addEventListener('DOMContentLoaded',icons);
+window.addEventListener('DOMContentLoaded',()=>{startSession('normal','all',false);icons();});
 </script>
 <div id="mobile-answer-actions" class="mobile-answer-actions" hidden aria-label="回答後の操作">
   <button type="button" class="mobile-explain-btn" onclick="showExplanation()"><i data-lucide="book-open" aria-hidden="true"></i> 理由を見る</button>
