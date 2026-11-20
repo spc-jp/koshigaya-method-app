@@ -64,7 +64,8 @@ export async function onRequest(context) {
 
   const pw = env.TEAM_PASSWORD;
   if (!pw) {
-    return new Response('設定エラー：Secret「TEAM_PASSWORD」が見つかりません。設定後に再デプロイしてください。',
+    const names = Object.keys(env || {}).join(', ') || '（なし）';
+    return new Response('設定エラー（診断版v2）：Secret「TEAM_PASSWORD」が見つかりません。\n本番が受け取っている設定の名前：' + names + '\n確認時刻：' + new Date().toISOString(),
       { status: 500, headers: { 'Content-Type': 'text/plain; charset=UTF-8', 'Cache-Control': 'no-store' } });
   }
   const token = await makeToken(pw);
